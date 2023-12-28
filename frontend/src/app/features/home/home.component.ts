@@ -1,10 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { ButtonModule } from 'primeng/button';
 import { PrimeIcons } from 'primeng/api';
+import { HomeService } from './home.service';
 @Component({
   selector: 'app-home',
   standalone: true,
@@ -19,11 +20,20 @@ import { PrimeIcons } from 'primeng/api';
     ButtonModule,
   ],
 })
-export class HomeComponent {
+export class HomeComponent implements OnInit {
   value!: string;
   loading: boolean = false;
 
-  constructor(private messageService: MessageService) {}
+  constructor(
+    private messageService: MessageService,
+    private homeService: HomeService
+  ) {}
+
+  ngOnInit(): void {
+    this.homeService.getUsers().subscribe((users) => {
+      console.log(users);
+    });
+  }
 
   onClick(): void {
     this.loading = true;
