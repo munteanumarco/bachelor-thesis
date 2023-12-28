@@ -1,0 +1,14 @@
+<div class="main-container flex-col">
+  <div class="flex-col bg-blur gap-1 p-1 border-radius-1 max-w-50">
+    <h1>Empowering Disaster Response</h1>
+    <div class="flex-row gap-1">
+      <p-button
+        label="Learn More"
+        [loading]="loading"
+        loadingIcon="pi pi-cog"
+        (onClick)="onClick()"
+      ></p-button>
+      <p-toast position="bottom-center" key="bc"></p-toast>
+    </div>
+  </div>
+</div>

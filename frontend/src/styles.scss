@@ -1,0 +1,49 @@
+@import "primeng/resources/themes/lara-light-blue/theme.css";
+@import "primeng/resources/primeng.css";
+@import "primeicons/primeicons.css";
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
+h1 {
+  color: white;
+  font-size: 2rem;
+}
+
+// tailwindy
+
+.bg-blur {
+  background-color: rgba(128, 128, 128, 0.7);
+}
+
+.flex-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.flex-col {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.gap-1 {
+  gap: 1rem;
+}
+
+.p-1 {
+  padding: 1rem;
+}
+
+.border-radius-1 {
+  border-radius: 1rem;
+}
+
+.max-w-50 {
+  max-width: 50%;
+}
