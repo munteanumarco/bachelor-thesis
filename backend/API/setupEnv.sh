@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ENV_FILE=".env"
+ENV_FILE=".env.local"
 
 if [ ! -f "$ENV_FILE" ]; then
     echo "Error: $ENV_FILE file not found."
