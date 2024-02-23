@@ -1,0 +1,8 @@
+#Environment variables
+.env.local
+.env.dev
+.env.prod
+.env
+
+# Ignore .DS_Store files
+.DS_Store

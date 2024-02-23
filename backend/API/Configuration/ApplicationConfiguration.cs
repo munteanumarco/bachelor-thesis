@@ -4,6 +4,8 @@ public static class ApplicationConfiguration
 {
     public static void ConfigureApp(WebApplication app)
     {
+        app.UseCors("AllowSpecificOrigin");
+        
         if (app.Environment.IsDevelopment())
         {
             app.UseSwagger();
