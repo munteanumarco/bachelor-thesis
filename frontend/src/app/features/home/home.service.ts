@@ -11,7 +11,7 @@ export class HomeService {
 
   constructor(private http: HttpClient) {}
 
-  getUsers(): Observable<User> {
+  getUsers(): Observable<User>{
     return this.http.get<User>(`${this.apiUrl}/users`);
   }
 }
