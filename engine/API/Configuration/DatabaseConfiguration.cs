@@ -7,11 +7,11 @@ public static class DatabaseConfiguration
 {
     public static void ConfigureDatabase(WebApplicationBuilder builder)
     {
-        var host = Environment.GetEnvironmentVariable("DB_HOST") ?? "localhost";
-        var port = Environment.GetEnvironmentVariable("DB_PORT") ?? "5432";
-        var database = Environment.GetEnvironmentVariable("DB_NAME") ?? "emergency";
-        var username = Environment.GetEnvironmentVariable("DB_USER") ?? "marcomunteanu";
-        var password = Environment.GetEnvironmentVariable("DB_PASSWORD") ?? "carp04";
+        var host = Environment.GetEnvironmentVariable("DB_HOST");
+        var port = Environment.GetEnvironmentVariable("DB_PORT");
+        var database = Environment.GetEnvironmentVariable("DB_NAME");
+        var username = Environment.GetEnvironmentVariable("DB_USER");
+        var password = Environment.GetEnvironmentVariable("DB_PASSWORD");
 
         if (string.IsNullOrEmpty(host) || string.IsNullOrEmpty(database) ||
             string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))

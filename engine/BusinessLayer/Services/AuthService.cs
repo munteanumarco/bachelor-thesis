@@ -1,55 +1,48 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using BusinessLayer.DTOs;
+using BusinessLayer.Helpers;
+using BusinessLayer.Settings;
 using BusinessLayer.Interfaces;
-using DataAccessLayer.Entities;
-using DataAccessLayer.Helpers;
-using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
 namespace BusinessLayer.Services;
 
 public class AuthService : IAuthService
 {
-    private readonly IConfiguration _configuration;
+    private readonly JwtSettings _jwtSettings;
 
-    public AuthService(IConfiguration configuration)
+    public AuthService(JwtSettings jwtSettings)
     {
-        this._configuration = configuration;
-
+        _jwtSettings = jwtSettings;
+        
     }
 
-    public async Task<string> GenerateTokenString(EmergencyAppUser user, IList<string> roles)
+    public async Task<string> GenerateJwtToken(UserDto userDto, IList<string> roles)
     {
 
         var claims = new List<Claim>
         {
-            new Claim(ClaimTypes.Email, user.Email),
-            new Claim(ClaimTypes.Name, user.UserName),
-            new Claim(SolutionConfigurationConstants.JwtIdClaim, user.Id)
+            new Claim(ClaimTypes.Email, userDto.Email),
+            new Claim(ClaimTypes.Name, userDto.Username),
+            new Claim(CustomClaimTypes.UserId, userDto.Id.ToString())
         };
-
-        foreach (var role in roles)
-        {
-            claims.Add(new Claim(ClaimTypes.Role, role));
-        }
-
-        var jwtIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER") ?? "issuer";
-        var jwtAudience = Environment.GetEnvironmentVariable("JWT_AUDIENCE") ?? "audience";
-        var jwtKey = Environment.GetEnvironmentVariable("JWT_KEY") ?? "7dc35e7e2113ea1473075565fa82986ff5f96fd0f6b5c5191b61614d2ded48707dc35e7e2113ea1473075565fa82986ff5f96fd0f6b5c5191b61614d2ded4870";
         
-        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
+        claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
 
-        var signingCred = new SigningCredentials(securityKey, SolutionConfigurationConstants.JwtAlgorithm);
+        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.JwtKey));
+
+        var signingCred = new SigningCredentials(securityKey, _jwtSettings.JwtAlgorithm);
 
         var securityToken = new JwtSecurityToken(
             claims: claims,
             expires: DateTime.Now.AddMinutes(60),
-            issuer: jwtIssuer,
-            audience:jwtAudience,
+            issuer: _jwtSettings.JwtIssuer,
+            audience: _jwtSettings.JwtAudience,
             signingCredentials: signingCred);
 
         string tokenString = new JwtSecurityTokenHandler().WriteToken(securityToken);
-        return await Task.FromResult<string>(tokenString);
+        return await Task.FromResult(tokenString);
     }
 }

@@ -1,11 +1,12 @@
-using System.Reflection;
 using System.Text;
+using BusinessLayer.Settings;
 using BusinessLayer.Interfaces;
+using BusinessLayer.RabbitMQ.EventContracts;
 using BusinessLayer.Services;
 using DataAccessLayer.DbContexts;
 using DataAccessLayer.Entities;
-using DataAccessLayer.Interfaces;
-using DataAccessLayer.Repositories;
+using dotenv.net;
+using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
@@ -14,10 +15,13 @@ using Serilog;
 
 namespace API.Configuration;
 
+//TO-DO: refactor this (e.g. structure the setup in a more readable way, extract the setup of services to separate methods, etc.)
 public static class ServiceConfiguration
 {
     public static void ConfigureServices(WebApplicationBuilder builder)
     {
+        DotEnv.Load(options: new DotEnvOptions(envFilePaths: new[] {"Configuration/.env"}));
+
         builder.Services.AddCors(options =>
         {
             options.AddPolicy("AllowSpecificOrigin",
@@ -58,6 +62,11 @@ public static class ServiceConfiguration
                 }
             });
         });
+
+        var baseAppSettings = new BaseAppSettings();
+        baseAppSettings.FrontendBaseUrl = Environment.GetEnvironmentVariable("FRONTEND_BASE_URL") ?? baseAppSettings.FrontendBaseUrl;
+        
+        builder.Services.AddSingleton(baseAppSettings);
         
         builder.Services.AddIdentity<EmergencyAppUser, IdentityRole>(options =>
         {
@@ -74,10 +83,14 @@ public static class ServiceConfiguration
         .AddEntityFrameworkStores<EngineServiceContext>()
         .AddDefaultTokenProviders();
         
-        var jwtIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER") ?? "issuer";
-        var jwtAudience = Environment.GetEnvironmentVariable("JWT_AUDIENCE") ?? "audience";
-        var jwtKey = Environment.GetEnvironmentVariable("JWT_KEY") ?? "7dc35e7e2113ea1473075565fa82986ff5f96fd0f6b5c5191b61614d2ded48707dc35e7e2113ea1473075565fa82986ff5f96fd0f6b5c5191b61614d2ded4870";
+        var jwtSettings = new JwtSettings();
+        jwtSettings.JwtIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER") ?? jwtSettings.JwtIssuer;
+        jwtSettings.JwtAudience = Environment.GetEnvironmentVariable("JWT_AUDIENCE") ?? jwtSettings.JwtAudience;
+        jwtSettings.JwtKey = Environment.GetEnvironmentVariable("JWT_KEY") ?? jwtSettings.JwtKey;
+        jwtSettings.JwtAlgorithm = Environment.GetEnvironmentVariable("JWT_ALGORITHM") ?? jwtSettings.JwtAlgorithm;
         
+        builder.Services.AddSingleton(jwtSettings);
+
         builder.Services.AddAuthentication(options =>
         {
             options.DefaultAuthenticateScheme =JwtBearerDefaults.AuthenticationScheme;
@@ -91,10 +104,31 @@ public static class ServiceConfiguration
                 ValidateAudience = true,
                 RequireExpirationTime = true,
                 ValidateIssuerSigningKey = true,
-                ValidIssuer = jwtIssuer,
-                ValidAudience = jwtAudience,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
+                ValidIssuer = jwtSettings.JwtIssuer,
+                ValidAudience = jwtSettings.JwtAudience,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.JwtKey))
             };
+        });
+        
+        var rabbitMqSettings = new RabbitMQSettings();
+        rabbitMqSettings.HostName = Environment.GetEnvironmentVariable("RABBITMQ_HOSTNAME") ?? rabbitMqSettings.HostName;
+        rabbitMqSettings.Port = int.Parse(Environment.GetEnvironmentVariable("RABBITMQ_PORT") ?? rabbitMqSettings.Port.ToString());
+        rabbitMqSettings.UserName = Environment.GetEnvironmentVariable("RABBITMQ_USERNAME") ?? rabbitMqSettings.UserName;
+        rabbitMqSettings.Password = Environment.GetEnvironmentVariable("RABBITMQ_PASSWORD") ?? rabbitMqSettings.Password;
+    
+        builder.Services.AddSingleton(rabbitMqSettings);
+
+        builder.Services.AddMassTransit(x =>
+        {
+            x.UsingRabbitMq((context, cfg) =>
+            {
+                cfg.Host(rabbitMqSettings.HostName, h =>
+                {
+                    h.Username(rabbitMqSettings.UserName);
+                    h.Password(rabbitMqSettings.Password);
+                });
+                cfg.Message<UserCreatedEvent>(m => m.SetEntityName("UserCreatedEvent"));
+            });
         });
         
         Log.Logger = new LoggerConfiguration()
@@ -105,7 +139,6 @@ public static class ServiceConfiguration
         builder.Host.UseSerilog();
         builder.Services.AddSingleton<Serilog.ILogger>(provider => Log.Logger);
         builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-        builder.Services.AddScoped<IUserRepository, UserRepository>();
         builder.Services.AddScoped<IUserService, UserService>();
         builder.Services.AddScoped<IAuthService, AuthService>();
     }

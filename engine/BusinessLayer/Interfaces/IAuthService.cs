@@ -1,8 +1,8 @@
-using DataAccessLayer.Entities;
+using BusinessLayer.DTOs;
 
 namespace BusinessLayer.Interfaces;
 
 public interface IAuthService
 {
-    Task<string> GenerateTokenString(EmergencyAppUser user, IList<string> roles);
+    Task<string> GenerateJwtToken(UserDto user, IList<string> roles);
 }

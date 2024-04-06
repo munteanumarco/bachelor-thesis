@@ -1,5 +1,3 @@
-using DataAccessLayer.Helpers;
-
 namespace API.Configuration;
 
 public static class ApplicationConfiguration

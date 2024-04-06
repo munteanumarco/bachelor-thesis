@@ -1,104 +1,154 @@
 using System.Web;
 using AutoMapper;
 using BusinessLayer.DTOs;
+using BusinessLayer.Helpers;
 using BusinessLayer.Interfaces;
 using BusinessLayer.Models;
+using BusinessLayer.RabbitMQ.EventContracts;
+using BusinessLayer.Settings;
 using DataAccessLayer.Entities;
-using DataAccessLayer.Exceptions;
-using DataAccessLayer.Helpers;
-using DataAccessLayer.Interfaces;
+using MassTransit;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
 
 namespace BusinessLayer.Services;
 
 public class UserService : IUserService
 {
-    private readonly IUserRepository _userRepository;
     private readonly IMapper _mapper;
     private readonly Serilog.ILogger _logger;
-    private readonly IConfiguration _configuration;
-    
-    public UserService(IUserRepository userRepository, IMapper mapper,  Serilog.ILogger logger, IConfiguration configuration)
+    private readonly IPublishEndpoint _publishEndpoint;
+    private readonly UserManager<EmergencyAppUser> _userManager;
+    private readonly RoleManager<IdentityRole> _roleManager;
+    private readonly BaseAppSettings _appSettings;
+    public UserService(IMapper mapper,  Serilog.ILogger logger, IPublishEndpoint publishEndpoint, UserManager<EmergencyAppUser> userManager, RoleManager<IdentityRole> roleManager, BaseAppSettings appSettings)
     {
-        _userRepository = userRepository;
         _mapper = mapper;
-        _configuration = configuration;
         _logger = logger;
+        _publishEndpoint = publishEndpoint;
+        _userManager = userManager;
+        _roleManager = roleManager;
+        _appSettings = appSettings;
     }
     
-    public async Task<LoginResponse> LoginAsync(LoginUserDto userDto)
+    public async Task<OperationResult<UserDto>> LoginAsync(LoginUserDto userDto)
     {
         try
         {
-            var user = await _userRepository.GetUserByIdentifier(userDto.UserIdentifier);
+            var user =  await GetEntityUserAsync(userDto.UserIdentifier);
             
-            if (user == null)
-            {
-                _logger.Error("Invalid credentials.");
-                return LoginResponse.Failure("Invalid credentials.");
-            }
+            if (user == null) return OperationResult<UserDto>.Failure(new List<string>(){"Invalid credentials."});
            
-            if (user.IsBlocked)
-            {
-                _logger.Error("User is blocked.");
-                return LoginResponse.Failure("User is blocked.");
-            }
+            if (user.IsBlocked) return OperationResult<UserDto>.Failure(new List<string>(){"User is blocked."});
 
-            if (!user.EmailConfirmed) 
-            {
-                _logger.Error("Email not confirmed.");
-                return LoginResponse.Failure("Email not confirmed.");
-            }
+            if (!user.EmailConfirmed) return OperationResult<UserDto>.Failure(new List<string>(){"Email not confirmed."});
             
-            var isPasswordCorrect = await _userRepository.LoginAsync(user, userDto.Password);
-            if (isPasswordCorrect)  return LoginResponse.Success("");
+            if (await _userManager.CheckPasswordAsync(user, userDto.Password)) return OperationResult<UserDto>.Success(_mapper.Map<UserDto>(user));
             
-            _logger.Error("Invalid credentials.");
-            return LoginResponse.Failure("Invalid credentials.");
+            return OperationResult<UserDto>.Failure(new List<string>(){"Invalid credentials."});
         }
-        catch (BaseException ex)
+        catch (Exception ex)
         {
             _logger.Error(ex, "An error occurred while logging in");
             throw;
         }
     }
     
-    public async Task<EmergencyAppUser> GetUserByIdentifier(string userIdentifier)
+    public async Task<OperationResult<UserDto>> CreateUserAsync(RegisterUserDto userDto)
     {
         try
         {
-            return await _userRepository.GetUserByIdentifier(userIdentifier);
+            var userEntity = _mapper.Map<EmergencyAppUser>(userDto);
+            const string userRole = RoleConstants.USER_ROLE;
+            
+            var createResult = await _userManager.CreateAsync(userEntity, userDto.Password);
+            if (!createResult.Succeeded)
+            {
+                return OperationResult<UserDto>.Failure(createResult.Errors.Select(e => e.Description));
+            }
+            
+            var addToRoleResult = await _userManager.AddToRoleAsync(userEntity, userRole);
+            if (!addToRoleResult.Succeeded)
+            {
+                return OperationResult<UserDto>.Failure(addToRoleResult.Errors.Select(e => e.Description));
+            }
+            
+            return OperationResult<UserDto>.Success(_mapper.Map<UserDto>(userEntity));
         }
         catch (Exception ex)
         {
-            _logger.Error(ex, "An error occurred while getting the user");
+            _logger.Error(ex, "An error occurred while creating a user");
             throw;
         }
     }
     
-    public async Task<IList<string>> GetRolesAsync(EmergencyAppUser user)
-    {
-        return await _userRepository.GetRolesAsync(user);
-    }
-    
-    public async Task<IdentityResult> CreateUserAsync(RegisterUserDto newUser)
+    public async Task PublishUserCreatedEventAsync(UserDto userDto)
     {
         try
         {
-            var user = _mapper.Map<EmergencyAppUser>(newUser);
-            var userCreated = await _userRepository.CreateUserAsync(user, newUser.Password);
-            
-            // Send email confirmation
+            var userEntity = await GetEntityUserAsync(userDto.Email);
+            if (userEntity == null) throw new Exception("User not found");    
+            var emailConfirmationLink = await GetEmailConfirmationLinkAsync(userEntity);
 
-            return userCreated;
-                
+            await _publishEndpoint.Publish(new UserCreatedEvent()
+            {
+                Email = userEntity.Email,
+                Username = userEntity.UserName,
+                ConfirmationLink = emailConfirmationLink
+            });
         }
         catch (Exception ex)
         {
-            throw new Exception(ex.Message);
+            _logger.Error(ex, "An error occurred while publishing user created event");
+            throw;
+        }
+    }
+    
+    public async Task<IList<string>> GetRolesAsync(UserDto userDto)
+    {
+        try
+        {
+            var userEntity = await GetEntityUserAsync(userDto.Email);
+            if (userEntity == null) throw new Exception("User not found");
+            return await _userManager.GetRolesAsync(userEntity);
+        }
+        catch (Exception ex)
+        {
+            _logger.Error(ex, "An error occurred while getting user roles");
+            throw;
+        }
+    }
+    
+    public async Task<OperationResult<UserDto>> ConfirmEmailAsync(ConfirmEmailDto confirmEmailDto)
+    {
+        try
+        {
+            var user = await GetEntityUserAsync(HttpUtility.UrlDecode(confirmEmailDto.Email));
+            
+            if (user == null) return OperationResult<UserDto>.Failure(new List<string>(){"User not found"});
+            
+            var result = await _userManager.ConfirmEmailAsync(user, HttpUtility.UrlDecode(confirmEmailDto.Token));
+            
+            if (!result.Succeeded) return OperationResult<UserDto>.Failure(new List<string>(){"Invalid credentials."});
+            
+            return OperationResult<UserDto>.Success(_mapper.Map<UserDto>(user));
+        }
+        catch (Exception ex)
+        {
+            _logger.Error(ex, "An error occurred while confirming email");
+            throw;
         }
     }
 
+    private async Task<string> GetEmailConfirmationLinkAsync(EmergencyAppUser user)
+    {
+        var token = await _userManager.GenerateEmailConfirmationTokenAsync(user).ConfigureAwait(false);
+        return _appSettings.FrontendBaseUrl + "/confirm-account?token=" + HttpUtility.UrlEncode(token) + "&email=" + HttpUtility.UrlEncode(user.Email);
+    }
+    
+    private async Task<EmergencyAppUser?> GetEntityUserAsync(string userIdentifier)
+    {
+        return await _userManager.FindByEmailAsync(userIdentifier)
+                    ?? await _userManager.FindByNameAsync(userIdentifier);
+    }
     
 }

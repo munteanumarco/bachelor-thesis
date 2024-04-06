@@ -10,5 +10,6 @@ public class UserProfile : Profile
     public UserProfile()
     {
         CreateMap<RegisterUserDto, EmergencyAppUser>();
+        CreateMap<EmergencyAppUser, UserDto>().ReverseMap();
     }
 }

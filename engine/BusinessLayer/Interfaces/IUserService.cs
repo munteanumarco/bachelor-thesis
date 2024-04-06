@@ -1,15 +1,13 @@
 using BusinessLayer.DTOs;
 using BusinessLayer.Models;
-using DataAccessLayer.Entities;
-using DataAccessLayer.Helpers;
-using Microsoft.AspNetCore.Identity;
 
 namespace BusinessLayer.Interfaces;
 
 public interface IUserService
 {
-    Task<LoginResponse> LoginAsync(LoginUserDto user);
-    Task<IdentityResult> CreateUserAsync(RegisterUserDto newUser);
-    Task<EmergencyAppUser> GetUserByIdentifier(string userIdentifier);
-    Task<IList<string>> GetRolesAsync(EmergencyAppUser user);
+    Task<OperationResult<UserDto>> LoginAsync(LoginUserDto user);
+    Task<OperationResult<UserDto>> CreateUserAsync(RegisterUserDto newUser);
+    Task<OperationResult<UserDto>> ConfirmEmailAsync(ConfirmEmailDto confirmEmailDto);
+    Task<IList<string>> GetRolesAsync(UserDto user);
+    Task PublishUserCreatedEventAsync(UserDto user);
 }
