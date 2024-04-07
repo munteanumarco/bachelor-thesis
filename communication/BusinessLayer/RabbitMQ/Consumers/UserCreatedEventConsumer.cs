@@ -6,12 +6,12 @@ using Serilog;
 
 namespace BusinessLayer.RabbitMQ.Consumers;
 
-public class UserCreatedConsumer : IConsumer<UserCreatedEvent>
+public class UserCreatedEventConsumer : IConsumer<UserCreatedEvent>
 {
     private readonly IMailSendingService _mailSendingService;
     private readonly Serilog.ILogger _logger;
 
-    public UserCreatedConsumer(ILogger logger, IMailSendingService mailSendingService)
+    public UserCreatedEventConsumer(ILogger logger, IMailSendingService mailSendingService)
     {
         _logger = logger;
         _mailSendingService = mailSendingService;

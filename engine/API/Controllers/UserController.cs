@@ -59,11 +59,28 @@ public class UserController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [HttpPost("confirm-email")]
-    public async Task<ActionResult<ConfirmEmailResponse>> ConfirmEmail([FromBody]ConfirmEmailDto confirmEmailDto)
+    public async Task<ActionResult<BaseResponse>> ConfirmEmail([FromBody]ConfirmEmailDto confirmEmailDto)
     {
         var result = await _userService.ConfirmEmailAsync(confirmEmailDto);
-        if (!result.IsSuccess) return BadRequest(ConfirmEmailResponse.Failure(result.Errors));
-        return Ok(ConfirmEmailResponse.Success());
+        if (!result.IsSuccess) return BadRequest(BaseResponse.Failure(result.Errors));
+        return Ok(BaseResponse.Success());
     }
     
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [HttpPost("send-reset-password-email")]
+    public async Task<ActionResult<BaseResponse>> ResetPassword([FromBody] ForgotPasswordDto forgotPasswordDto)
+    {
+        await _userService.PublishResetPasswordEventAsync(forgotPasswordDto.Email);
+        return Ok(BaseResponse.Success());
+    }
+    
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [HttpPost("set-new-password")]
+    public async Task<IActionResult> SetNewPassword([FromBody] SetNewPasswordDto setNewPasswordDto)
+    {
+        var result = await _userService.SetNewPassword(setNewPasswordDto);
+        if (!result.IsSuccess) return BadRequest(BaseResponse.Failure(result.Errors));    
+        return Ok(BaseResponse.Success());
+    }
 }

@@ -33,7 +33,8 @@ public class ServiceConfiguration
         
         builder.Services.AddMassTransit(x =>
         {
-            x.AddConsumer<UserCreatedConsumer>();
+            x.AddConsumer<UserCreatedEventConsumer>();
+            x.AddConsumer<ResetPasswordEventConsumer>();
 
             x.UsingRabbitMq((context, cfg) =>
             {
@@ -45,8 +46,14 @@ public class ServiceConfiguration
                 
                 cfg.ReceiveEndpoint("user-created-queue", e =>
                 {
-                    e.Consumer<UserCreatedConsumer>(context);
+                    e.Consumer<UserCreatedEventConsumer>(context);
                     e.Bind("UserCreatedEvent");
+                });
+                
+                cfg.ReceiveEndpoint("reset-password-queue", e =>
+                {
+                    e.Consumer<ResetPasswordEventConsumer>(context);
+                    e.Bind("ResetPasswordEvent");
                 });
             });
         });

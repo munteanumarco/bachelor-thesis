@@ -103,6 +103,28 @@ public class UserService : IUserService
         }
     }
     
+    public async Task PublishResetPasswordEventAsync(string email)
+    {
+        try
+        {
+            var userEntity = await GetEntityUserAsync(email);
+            if (userEntity == null) return;
+            var token = await _userManager.GeneratePasswordResetTokenAsync(userEntity);
+            var resetLink = _appSettings.FrontendBaseUrl + "/reset-password?token=" + HttpUtility.UrlEncode(token) + "&email=" + HttpUtility.UrlEncode(userEntity.Email);
+            await _publishEndpoint.Publish(new ResetPasswordEvent()
+            {
+                Username = userEntity.UserName,
+                Email = userEntity.Email,
+                ResetLink = resetLink
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.Error(ex, "An error occurred while publishing reset password event");
+            throw;
+        }
+    }
+    
     public async Task<IList<string>> GetRolesAsync(UserDto userDto)
     {
         try
@@ -135,6 +157,23 @@ public class UserService : IUserService
         catch (Exception ex)
         {
             _logger.Error(ex, "An error occurred while confirming email");
+            throw;
+        }
+    }
+
+    public async Task<OperationResult<string>> SetNewPassword(SetNewPasswordDto setNewPasswordDto)
+    {
+        try
+        {
+            var userEntity = await GetEntityUserAsync(setNewPasswordDto.Email);
+            if (userEntity == null) return OperationResult<string>.Failure(new List<string>(){"User not found"});
+            var result = await _userManager.ResetPasswordAsync(userEntity, HttpUtility.UrlDecode(setNewPasswordDto.Token), setNewPasswordDto.Password);
+            if (!result.Succeeded) return OperationResult<string>.Failure(result.Errors.Select(e => e.Description));
+            return OperationResult<string>.Success("Password reset successfully.");
+        }
+        catch (Exception ex)
+        {
+            _logger.Error(ex, "An error occurred while setting new password");
             throw;
         }
     }
