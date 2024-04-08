@@ -1,6 +1,6 @@
 namespace API.Responses;
 
-
+//TO-DO: Refactor these classes to use BaseResponse as base class
 public class BaseResponse
 {
     public bool IsSuccess { get; set; }

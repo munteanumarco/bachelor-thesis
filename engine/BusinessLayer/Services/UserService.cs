@@ -1,9 +1,8 @@
 using System.Web;
 using AutoMapper;
-using BusinessLayer.DTOs;
+using BusinessLayer.DTOs.UserManagement;
 using BusinessLayer.Helpers;
 using BusinessLayer.Interfaces;
-using BusinessLayer.Models;
 using BusinessLayer.RabbitMQ.EventContracts;
 using BusinessLayer.Settings;
 using DataAccessLayer.Entities;

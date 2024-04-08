@@ -5,6 +5,8 @@ using BusinessLayer.RabbitMQ.EventContracts;
 using BusinessLayer.Services;
 using DataAccessLayer.DbContexts;
 using DataAccessLayer.Entities;
+using DataAccessLayer.Interfaces;
+using DataAccessLayer.Repositories;
 using dotenv.net;
 using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -142,5 +144,7 @@ public static class ServiceConfiguration
         builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
         builder.Services.AddScoped<IUserService, UserService>();
         builder.Services.AddScoped<IAuthService, AuthService>();
+        builder.Services.AddScoped<IEmergencyEventService, EmergencyEventService>();
+        builder.Services.AddScoped<IEmergencyEventRepository, EmergencyEventRepository>();
     }
 }

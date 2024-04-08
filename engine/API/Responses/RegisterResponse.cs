@@ -1,4 +1,5 @@
-using BusinessLayer.DTOs;
+
+using BusinessLayer.DTOs.UserManagement;
 
 namespace API.Responses;
 

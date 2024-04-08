@@ -1,4 +1,4 @@
-namespace BusinessLayer.DTOs;
+namespace BusinessLayer.Helpers;
 
 public class OperationResult<T>
 {

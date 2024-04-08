@@ -1,6 +1,5 @@
 using AutoMapper;
-using BusinessLayer.DTOs;
-using BusinessLayer.Models;
+using BusinessLayer.DTOs.UserManagement;
 using DataAccessLayer.Entities;
 
 namespace BusinessLayer.MapperProfiles;

@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace BusinessLayer.Models;
+namespace BusinessLayer.DTOs.UserManagement;
 
 public class LoginUserDto
 {

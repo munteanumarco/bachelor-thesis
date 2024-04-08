@@ -3,6 +3,7 @@ using DataAccessLayer.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 
 namespace DataAccessLayer.DbContexts;
 
@@ -11,6 +12,8 @@ public class EngineServiceContext : IdentityDbContext<EmergencyAppUser>
     public EngineServiceContext(DbContextOptions<EngineServiceContext> options) : base(options)
     {
     }
+    
+    public DbSet<EmergencyEvent> EmergencyEvents { get; set; }
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

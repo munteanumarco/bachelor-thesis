@@ -1,7 +1,6 @@
 using API.Responses;
-using BusinessLayer.DTOs;
+using BusinessLayer.DTOs.UserManagement;
 using BusinessLayer.Interfaces;
-using BusinessLayer.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;

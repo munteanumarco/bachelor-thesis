@@ -1,6 +1,5 @@
-using BusinessLayer.DTOs;
-using BusinessLayer.Models;
-using DataAccessLayer.Entities;
+using BusinessLayer.DTOs.UserManagement;
+using BusinessLayer.Helpers;
 
 namespace BusinessLayer.Interfaces;
 

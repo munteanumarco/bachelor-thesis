@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace BusinessLayer.DTOs;
+namespace BusinessLayer.DTOs.UserManagement;
 
 public class RegisterUserDto
 {
