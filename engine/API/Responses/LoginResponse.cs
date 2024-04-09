@@ -1,15 +1,12 @@
 namespace API.Responses;
 
-public class LoginResponse
+public class LoginResponse : BaseResponse
 {
-    public bool IsSuccess { get; set; }
-    public IEnumerable<string> ErrorMessages { get; set; }
     public string Token { get; set; }
 
-    public LoginResponse(bool isSuccess, IEnumerable<string> errorMessages, string token)
+    private LoginResponse(bool isSuccess, IEnumerable<string> errorMessages, string token)
+        : base(isSuccess, errorMessages)
     {
-        IsSuccess = isSuccess;
-        ErrorMessages = errorMessages;
         Token = token;
     }
 
@@ -18,7 +15,7 @@ public class LoginResponse
         return new LoginResponse(true, new List<string>(), token);
     }
 
-    public static LoginResponse Failure(IEnumerable<string> errorMessages)
+    public new static LoginResponse Failure(IEnumerable<string> errorMessages)
     {
         return new LoginResponse(false, errorMessages, "");
     }

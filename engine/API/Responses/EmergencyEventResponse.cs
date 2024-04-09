@@ -2,16 +2,13 @@ using BusinessLayer.DTOs.EmergencyEvent;
 
 namespace API.Responses;
 
-public class EmergencyEventResponse
+public class EmergencyEventResponse : BaseResponse
 {
-    public bool IsSuccess { get; set; }
-    public IEnumerable<string> ErrorMessages { get; set; }
     public EmergencyEventDto EmergencyEvent { get; set; }
 
-    public EmergencyEventResponse(bool isSuccess, IEnumerable<string> errorMessages, EmergencyEventDto emergencyEventDto)
+    private EmergencyEventResponse(bool isSuccess, IEnumerable<string> errorMessages, EmergencyEventDto emergencyEventDto)
+        : base(isSuccess, errorMessages)
     {
-        IsSuccess = isSuccess;
-        ErrorMessages = errorMessages;
         EmergencyEvent = emergencyEventDto;
     }
 
@@ -20,7 +17,7 @@ public class EmergencyEventResponse
         return new EmergencyEventResponse(true, new List<string>(), emergencyEventDto);
     }
 
-    public static EmergencyEventResponse Failure(IEnumerable<string> errorMessages)
+    public new static EmergencyEventResponse Failure(IEnumerable<string> errorMessages)
     {
         return new EmergencyEventResponse(false, errorMessages, null);
     }

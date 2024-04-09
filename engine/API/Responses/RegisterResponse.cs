@@ -3,16 +3,13 @@ using BusinessLayer.DTOs.UserManagement;
 
 namespace API.Responses;
 
-public class RegisterResponse
+public class RegisterResponse : BaseResponse
 {
-    public bool IsSuccess { get; set; }
-    public IEnumerable<string> ErrorMessages { get; set; }
     public UserDto User { get; set; }
 
-    public RegisterResponse(bool isSuccess, IEnumerable<string> errorMessages, UserDto userDto)
+    private RegisterResponse(bool isSuccess, IEnumerable<string> errorMessages, UserDto userDto)
+        : base(isSuccess, errorMessages)
     {
-        IsSuccess = isSuccess;
-        ErrorMessages = errorMessages;
         User = userDto;
     }
 
@@ -21,7 +18,7 @@ public class RegisterResponse
         return new RegisterResponse(true, new List<string>(), userDto);
     }
 
-    public static RegisterResponse Failure(IEnumerable<string> errorMessages)
+    public new static RegisterResponse Failure(IEnumerable<string> errorMessages)
     {
         return new RegisterResponse(false, errorMessages, null);
     }

@@ -1,12 +1,11 @@
 namespace API.Responses;
 
-//TO-DO: Refactor these classes to use BaseResponse as base class
 public class BaseResponse
 {
     public bool IsSuccess { get; set; }
     public IEnumerable<string> ErrorMessages { get; set; }
 
-    public BaseResponse(bool isSuccess, IEnumerable<string> errorMessages)
+    protected BaseResponse(bool isSuccess, IEnumerable<string> errorMessages)
     {
         IsSuccess = isSuccess;
         ErrorMessages = errorMessages;
