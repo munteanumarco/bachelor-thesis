@@ -7,6 +7,7 @@ import { ConfirmEmailComponent } from './features/confirm-email/confirm-email.co
 import { ForgotPasswordComponent } from './features/forgot-password/forgot-password.component';
 import { CheckEmailComponent } from './shared/check-email/check-email.component';
 import { ResetPasswordComponent } from './features/reset-password/reset-password.component';
+import { ReportEmergencyComponent } from './features/report-emergency/report-emergency.component';
 
 export const routes: Routes = [
   {
@@ -48,5 +49,10 @@ export const routes: Routes = [
     component: ResetPasswordComponent,
     title: 'Reset Password',
     canActivate: [guestGuard],
+  },
+  {
+    path: 'report-emergency',
+    component: ReportEmergencyComponent,
+    title: 'Report Emergency',
   },
 ];

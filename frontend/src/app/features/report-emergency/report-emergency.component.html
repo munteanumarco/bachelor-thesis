@@ -1,0 +1,123 @@
+<div class="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
+  <div class="sm:mx-auto sm:w-full sm:max-w-md">
+    <img
+      class="mx-auto h-10 w-auto"
+      src="../../../assets/images/logo.png"
+      alt="Sky Sentinel"
+    />
+    <h2
+      class="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900"
+    >
+      Report Emergency Event
+    </h2>
+  </div>
+
+  <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-md">
+    <form [formGroup]="emergencyForm" class="space-y-6">
+      <div>
+        <label
+          for="type"
+          class="block text-sm font-medium leading-6 text-gray-900"
+        >
+          Type<span class="text-red-500">*</span>
+        </label>
+        <div class="mt-2">
+          <select
+            id="type"
+            name="type"
+            formControlName="type"
+            required
+            class="block w-full rounded-md border-0 py-2 px-3 text-gray-900 bg-white shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-black-600 sm:text-sm sm:leading-6"
+          >
+            <option disabled selected value="">Select Type</option>
+            <option value="Fire">Fire</option>
+            <option value="Flood">Flood</option>
+            <option value="Earthquake">Earthquake</option>
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <label
+          for="severity"
+          class="block text-sm font-medium leading-6 text-gray-900"
+        >
+          Severity<span class="text-red-500">*</span>
+        </label>
+        <div class="mt-2">
+          <select
+            id="severity"
+            name="severity"
+            formControlName="severity"
+            required
+            class="block w-full rounded-md border-0 py-2 px-3 text-gray-900 bg-white shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-black-600 sm:text-sm sm:leading-6"
+          >
+            <option disabled selected value="">Select Severity</option>
+            <option value="Low">Low</option>
+            <option value="Medium">Medium</option>
+            <option value="High">High</option>
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <label
+          for="location"
+          class="block text-sm font-medium leading-6 text-gray-900"
+          >Location<span class="text-red-500">*</span></label
+        >
+        <div class="mt-2 flex">
+          <input
+            id="location"
+            name="location"
+            type="text"
+            autocomplete="off"
+            formControlName="location"
+            required
+            class="block w-full rounded-l-md border-0 py-1.5 px-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-black-600 sm:text-sm sm:leading-6"
+          />
+          <button
+            type="button"
+            (click)="getLocation()"
+            class="px-4 py-1.5 text-sm bg-black text-white rounded-r-md hover:bg-grey-700"
+          >
+            <div class="flex justify-center">
+              <i class="pi pi-map-marker" style="font-size: 1rem"></i>
+            </div>
+          </button>
+        </div>
+      </div>
+
+      <div>
+        <label
+          for="email"
+          class="block text-sm font-medium leading-6 text-gray-900"
+        >
+          Description
+        </label>
+        <div class="mt-2">
+          <input
+            id="email"
+            name="email"
+            type="email"
+            autocomplete="email"
+            required
+            formControlName="email"
+            class="block w-full rounded-md border-0 py-1.5 px-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-black-600 sm:text-sm sm:leading-6"
+          />
+        </div>
+      </div>
+
+      <div>
+        <button
+          type="submit"
+          [disabled]="!emergencyForm.valid"
+          (click)="onSubmit()"
+          class="flex w-full justify-center rounded-md bg-black text-white px-3 py-1.5 text-sm font-semibold leading-6 shadow-sm hover:bg-gray-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600 disabled:bg-opacity-30 disabled:cursor-not-allowed"
+        >
+          Report
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

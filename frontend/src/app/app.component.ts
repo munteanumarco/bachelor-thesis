@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterOutlet } from '@angular/router';
+import { RouterModule, RouterOutlet } from '@angular/router';
 import { NavbarComponent } from './shared/navbar/navbar.component';
 import { RouteService } from './services/route.service';
 import { MessageService } from 'primeng/api';
@@ -39,6 +39,7 @@ export class AppComponent {
       '/forgot-password',
       '/check-email',
       '/reset-password',
+      '/report-emergency',
     ];
     this.showNavbar = !NO_NAVBAR_PREFIXES.some((prefix) =>
       url.startsWith(prefix)
