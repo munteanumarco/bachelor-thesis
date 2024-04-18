@@ -1,0 +1,163 @@
+<div class="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
+  <div class="sm:mx-auto sm:w-full sm:max-w-sm">
+    <img
+      class="mx-auto h-10 w-auto"
+      src="../../../assets/images/logo.png"
+      alt="Sky Sentinel"
+    />
+    <h2
+      class="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900"
+    >
+      Create account
+    </h2>
+  </div>
+
+  <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+    <form [formGroup]="registerForm" class="space-y-6">
+      <div>
+        <label
+          for="email"
+          class="block text-sm font-medium leading-6 text-gray-900"
+          >Username</label
+        >
+        <div class="mt-2">
+          <input
+            id="username"
+            name="username"
+            type="text"
+            autocomplete="text"
+            required
+            formControlName="username"
+            class="block w-full rounded-md border-0 py-1.5 px-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-black-600 sm:text-sm sm:leading-6"
+          />
+          @if(registerForm.get('username')?.invalid &&
+          (registerForm.get('username')?.dirty ||
+          registerForm.get('username')?.touched)){
+          <div class="mt-2">
+            @if(registerForm.get('username')?.errors?.['required']){
+            <div class="text-red-500 text-xs">Username is required.</div>
+            } @if(registerForm.get('username')?.errors?.['minlength']){
+            <div class="text-red-500 text-xs">At least 5 characters</div>
+            }
+          </div>
+          }
+        </div>
+      </div>
+
+      <div>
+        <label
+          for="email"
+          class="block text-sm font-medium leading-6 text-gray-900"
+          >Email address</label
+        >
+        <div class="mt-2">
+          <input
+            id="email"
+            name="email"
+            type="email"
+            autocomplete="email"
+            required
+            formControlName="email"
+            class="block w-full rounded-md border-0 py-1.5 px-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-black-600 sm:text-sm sm:leading-6"
+          />
+          @if(registerForm.get('email')?.invalid &&
+          (registerForm.get('email')?.dirty ||
+          registerForm.get('email')?.touched)){
+          <div class="mt-2">
+            @if(registerForm.get('email')?.errors?.['required']){
+            <div class="text-red-500 text-xs">Email is required.</div>
+            } @if(registerForm.get('email')?.errors?.['email']){
+            <div class="text-red-500 text-xs">Please enter a valid email.</div>
+            }
+          </div>
+          }
+        </div>
+      </div>
+
+      <div>
+        <label
+          for="password"
+          class="block text-sm font-medium leading-6 text-gray-900"
+          >Password</label
+        >
+        <div class="mt-2">
+          <input
+            id="password"
+            name="password"
+            type="password"
+            autocomplete="current-password"
+            required
+            formControlName="password"
+            class="block w-full rounded-md border-0 py-1.5 px-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-black-600 sm:text-sm sm:leading-6"
+          />
+          @if(registerForm.get('password')?.invalid &&
+          (registerForm.get('password')?.dirty ||
+          registerForm.get('password')?.touched)){
+          <div class="mt-2">
+            @if(registerForm.get('password')?.errors?.['required']){
+            <div class="text-red-500 text-xs">Password is required.</div>
+            } @if(registerForm.get('password')?.errors?.['passwordInvalid']){
+            <div class="text-red-500 text-xs">
+              {{ getPasswordErrorMessage() }}
+            </div>
+            }
+          </div>
+          }
+        </div>
+      </div>
+
+      <div>
+        <label
+          for="confirm-password"
+          class="block text-sm font-medium leading-6 text-gray-900"
+          >Confirm Password</label
+        >
+        <div class="mt-2">
+          <input
+            id="confirm-password"
+            name="confirm-password"
+            type="password"
+            autocomplete="confirm-password"
+            required
+            formControlName="confirmPassword"
+            class="block w-full rounded-md border-0 py-1.5 px-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-black-600 sm:text-sm sm:leading-6"
+          />
+          @if(registerForm.get('confirmPassword')?.invalid &&
+          (registerForm.get('confirmPassword')?.dirty ||
+          registerForm.get('confirmPassword')?.touched)){
+          <div class="mt-2">
+            @if(registerForm.get('confirmPassword')?.errors?.['required']){
+            <div class="text-red-500 text-xs">
+              Confirm Password is required.
+            </div>
+            }
+            @if(registerForm.get('confirmPassword')?.errors?.['confirmPassword']){
+            <div class="text-red-500 text-xs">Passwords do not match.</div>
+            }
+          </div>
+          }
+        </div>
+      </div>
+
+      <div>
+        <button
+          type="submit"
+          [disabled]="!registerForm.valid"
+          (click)="onSubmit()"
+          class="flex w-full justify-center rounded-md bg-black text-white px-3 py-1.5 text-sm font-semibold leading-6 shadow-sm hover:bg-gray-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600 disabled:bg-opacity-30 disabled:cursor-not-allowed"
+        >
+          Register
+        </button>
+      </div>
+    </form>
+
+    <p class="mt-10 text-center text-sm">
+      Already have an account?
+      <a
+        href="/login"
+        class="font-semibold leading-6 text-black-600 hover:text-black-500"
+        >Login</a
+      >
+    </p>
+  </div>
+</div>

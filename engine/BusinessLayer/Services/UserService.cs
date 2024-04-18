@@ -164,7 +164,7 @@ public class UserService : IUserService
     {
         try
         {
-            var userEntity = await GetEntityUserAsync(setNewPasswordDto.Email);
+            var userEntity = await GetEntityUserAsync(HttpUtility.UrlDecode(setNewPasswordDto.Email));
             if (userEntity == null) return OperationResult<string>.Failure(new List<string>(){"User not found"});
             var result = await _userManager.ResetPasswordAsync(userEntity, HttpUtility.UrlDecode(setNewPasswordDto.Token), setNewPasswordDto.Password);
             if (!result.Succeeded) return OperationResult<string>.Failure(result.Errors.Select(e => e.Description));
@@ -180,7 +180,7 @@ public class UserService : IUserService
     private async Task<string> GetEmailConfirmationLinkAsync(EmergencyAppUser user)
     {
         var token = await _userManager.GenerateEmailConfirmationTokenAsync(user).ConfigureAwait(false);
-        return _appSettings.FrontendBaseUrl + "/confirm-account?token=" + HttpUtility.UrlEncode(token) + "&email=" + HttpUtility.UrlEncode(user.Email);
+        return _appSettings.FrontendBaseUrl + "/confirm-email?token=" + HttpUtility.UrlEncode(token) + "&email=" + HttpUtility.UrlEncode(user.Email);
     }
     
     private async Task<EmergencyAppUser?> GetEntityUserAsync(string userIdentifier)

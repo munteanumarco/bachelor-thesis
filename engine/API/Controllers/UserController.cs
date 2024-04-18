@@ -76,7 +76,7 @@ public class UserController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [HttpPost("set-new-password")]
-    public async Task<IActionResult> SetNewPassword([FromBody] SetNewPasswordDto setNewPasswordDto)
+    public async Task<ActionResult<BaseResponse>> SetNewPassword([FromBody] SetNewPasswordDto setNewPasswordDto)
     {
         var result = await _userService.SetNewPassword(setNewPasswordDto);
         if (!result.IsSuccess) return BadRequest(BaseResponse.Failure(result.Errors));    

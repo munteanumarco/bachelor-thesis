@@ -1,14 +1,20 @@
-<div class="main-container flex-col">
-  <div class="flex-col bg-blur gap-1 p-1 border-radius-1 max-w-50">
-    <h1>Empowering Disaster Response</h1>
-    <div class="flex-row gap-1">
-      <p-button
-        label="Learn More"
-        [loading]="loading"
-        loadingIcon="pi pi-cog"
-        (onClick)="onClick()"
-      ></p-button>
-      <p-toast position="bottom-center" key="bc"></p-toast>
+<div
+  class="flex flex-col items-center justify-center bg-cover bg-center"
+  style="
+    background-image: url('/assets/images/home.jpeg');
+    height: calc(100vh - 60px);
+  "
+>
+  <div
+    class="flex flex-col bg-gray-500 bg-opacity-70 gap-8 p-10 items-center justify-center rounded-lg max-w-2xl"
+  >
+    <h1 class="text-white text-2xl font-bold">Sky Sentinel</h1>
+    <div class="flex flex-row justify-center items-center gap-2">
+      <button
+        class="px-4 py-2 font-bold text-white bg-red-500 rounded hover:bg-red-700"
+      >
+        Report Emergency
+      </button>
     </div>
   </div>
 </div>
