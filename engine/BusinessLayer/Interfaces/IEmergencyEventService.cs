@@ -8,7 +8,7 @@ namespace BusinessLayer.Interfaces;
 public interface IEmergencyEventService
 {
     Task<OperationResult<EmergencyEventDto>> CreateEmergencyEventAsync(
-        EmergencyEventCreationDto emergencyEventCreationDto);
+        EmergencyEventCreationDto emergencyEventCreationDto, string? userIdString);
     Task<OperationResult<EmergencyEventDto>> GetEmergencyEventByIdAsync(Guid id);
     Task<OperationResult<PagedResultDto<EmergencyEventDto>>> GetEmergencyEventsAsync(GetEventsParameters parameters);
 }

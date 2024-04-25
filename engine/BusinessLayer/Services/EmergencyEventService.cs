@@ -23,11 +23,15 @@ public class EmergencyEventService : IEmergencyEventService
         _logger = logger;
     }
 
-    public async Task<OperationResult<EmergencyEventDto>> CreateEmergencyEventAsync(EmergencyEventCreationDto emergencyEventCreationDto)
+    public async Task<OperationResult<EmergencyEventDto>> CreateEmergencyEventAsync(EmergencyEventCreationDto emergencyEventCreationDto, string? userIdString)
     {
         try
         {
             var emergencyEvent = _mapper.Map<EmergencyEvent>(emergencyEventCreationDto);
+            if (userIdString != null) emergencyEvent.ReportedBy = Guid.Parse(userIdString);
+            emergencyEvent.Status = Status.New;
+            emergencyEvent.ReportedAt = DateTime.Now;
+            emergencyEvent.UpdatedAt = DateTime.Now;
             var createdEvent = _mapper.Map<EmergencyEventDto>(await _emergencyEventRepository.CreateEmergencyEventAsync(emergencyEvent));
             return OperationResult<EmergencyEventDto>.Success(createdEvent);
         }

@@ -26,4 +26,8 @@ export class StorageService {
     const userToken = localStorage.getItem(LocalStorageKeys.USER_TOKEN);
     return userToken ? true : false;
   }
+
+  public getUserToken(): string | null {
+    return localStorage.getItem(LocalStorageKeys.USER_TOKEN);
+  }
 }

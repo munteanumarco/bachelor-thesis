@@ -19,6 +19,8 @@ public class EmergencyEventRepository : IEmergencyEventRepository
 
     public async Task<EmergencyEvent> CreateEmergencyEventAsync(EmergencyEvent emergencyEvent)
     {
+        emergencyEvent.ReportedAt = emergencyEvent.ReportedAt.ToUniversalTime();
+        emergencyEvent.UpdatedAt = emergencyEvent.UpdatedAt.ToUniversalTime();
         await _context.EmergencyEvents.AddAsync(emergencyEvent);
         await _context.SaveChangesAsync();
         return emergencyEvent;

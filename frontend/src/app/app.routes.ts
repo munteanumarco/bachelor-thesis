@@ -8,6 +8,8 @@ import { ForgotPasswordComponent } from './features/forgot-password/forgot-passw
 import { CheckEmailComponent } from './shared/check-email/check-email.component';
 import { ResetPasswordComponent } from './features/reset-password/reset-password.component';
 import { ReportEmergencyComponent } from './features/report-emergency/report-emergency.component';
+import { DashboardComponent } from './features/dashboard/dashboard.component';
+import { userGuard } from './guards/user.guard';
 
 export const routes: Routes = [
   {
@@ -54,5 +56,11 @@ export const routes: Routes = [
     path: 'report-emergency',
     component: ReportEmergencyComponent,
     title: 'Report Emergency',
+  },
+  {
+    path: 'dashboard',
+    component: DashboardComponent,
+    title: 'Dashboard',
+    canActivate: [userGuard],
   },
 ];

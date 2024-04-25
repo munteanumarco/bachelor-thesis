@@ -19,7 +19,7 @@
           for="type"
           class="block text-sm font-medium leading-6 text-gray-900"
         >
-          Type<span class="text-red-500">*</span>
+          Type
         </label>
         <div class="mt-2">
           <select
@@ -30,9 +30,12 @@
             class="block w-full rounded-md border-0 py-2 px-3 text-gray-900 bg-white shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-black-600 sm:text-sm sm:leading-6"
           >
             <option disabled selected value="">Select Type</option>
-            <option value="Fire">Fire</option>
-            <option value="Flood">Flood</option>
-            <option value="Earthquake">Earthquake</option>
+            <option
+              *ngFor="let state of emergencyTypeNames | keyvalue"
+              [ngValue]="state.key"
+            >
+              {{ state.value }}
+            </option>
           </select>
         </div>
       </div>
@@ -42,7 +45,7 @@
           for="severity"
           class="block text-sm font-medium leading-6 text-gray-900"
         >
-          Severity<span class="text-red-500">*</span>
+          Severity
         </label>
         <div class="mt-2">
           <select
@@ -53,9 +56,12 @@
             class="block w-full rounded-md border-0 py-2 px-3 text-gray-900 bg-white shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-black-600 sm:text-sm sm:leading-6"
           >
             <option disabled selected value="">Select Severity</option>
-            <option value="Low">Low</option>
-            <option value="Medium">Medium</option>
-            <option value="High">High</option>
+            <option
+              *ngFor="let state of severityNames | keyvalue"
+              [ngValue]="state.key"
+            >
+              {{ state.value }}
+            </option>
           </select>
         </div>
       </div>
@@ -65,10 +71,11 @@
           for="location"
           class="block text-sm font-medium leading-6 text-gray-900"
         >
-          Location<span class="text-red-500">*</span>
+          Location
         </label>
         <div class="mt-2 flex">
           <input
+            #locationInput
             id="location"
             name="location"
             type="text"
@@ -116,7 +123,7 @@
         <button
           type="submit"
           [disabled]="!emergencyForm.valid"
-          (click)="onSubmit()"
+          (click)="reportEvent()"
           class="flex w-full justify-center rounded-md bg-black text-white px-3 py-1.5 text-sm font-semibold leading-6 shadow-sm hover:bg-gray-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600 disabled:bg-opacity-30 disabled:cursor-not-allowed"
         >
           Report

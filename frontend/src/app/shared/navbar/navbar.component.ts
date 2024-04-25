@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MenuItem, MessageService } from 'primeng/api';
 import { MenubarModule } from 'primeng/menubar';
 import { StorageService } from '../../services/storage.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-navbar',
@@ -15,7 +16,8 @@ export class NavbarComponent implements OnInit {
 
   constructor(
     private readonly storageService: StorageService,
-    private readonly messageService: MessageService
+    private readonly messageService: MessageService,
+    private readonly router: Router
   ) {}
 
   guestItems: MenuItem[] = [
@@ -27,6 +29,10 @@ export class NavbarComponent implements OnInit {
     {
       label: 'Logout',
       command: () => this.onLogout(),
+    },
+    {
+      label: 'Dashboard',
+      routerLink: ['/dashboard'],
     },
   ];
 
@@ -44,5 +50,6 @@ export class NavbarComponent implements OnInit {
       summary: 'Logout Successful',
       detail: 'You have successfully logged out!',
     });
+    this.router.navigate(['/']);
   }
 }

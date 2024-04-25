@@ -1,3 +1,5 @@
+using API.Middleware;
+
 namespace API.Configuration;
 
 public static class ApplicationConfiguration
@@ -15,6 +17,7 @@ public static class ApplicationConfiguration
         app.UseHttpsRedirection();
         app.UseAuthentication();
         app.UseAuthorization();
+        app.UseMiddleware<RequestContextMiddleware>();
         app.MapControllers();
     }
 }

@@ -42,7 +42,8 @@ public class EmergencyEventController : ControllerBase
     {
         try
         {
-            var result = await _emergencyEventService.CreateEmergencyEventAsync(emergencyEventCreationDto);
+            var userIdString = HttpContext.Items["userId"] as string;
+            var result = await _emergencyEventService.CreateEmergencyEventAsync(emergencyEventCreationDto, userIdString);
             if (!result.IsSuccess) return BadRequest(EmergencyEventResponse.Failure(result.Errors));
             var emergencyEvent = result.Data;
             return Created($"api/emergency-events/{emergencyEvent.Id}", EmergencyEventResponse.Success(emergencyEvent));
@@ -52,4 +53,5 @@ public class EmergencyEventController : ControllerBase
             return BadRequest(EmergencyEventResponse.Failure(new List<string>(){ex.Message}));
         }
     }
+    
 }

@@ -1,11 +1,12 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule, RouterOutlet } from '@angular/router';
+import { RouterOutlet } from '@angular/router';
 import { NavbarComponent } from './shared/navbar/navbar.component';
 import { RouteService } from './services/route.service';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { FormsModule } from '@angular/forms';
+import { SpinnerComponent } from './shared/spinner/spinner.component';
 
 @Component({
   selector: 'app-root',
@@ -16,6 +17,7 @@ import { FormsModule } from '@angular/forms';
     NavbarComponent,
     ToastModule,
     FormsModule,
+    SpinnerComponent,
   ],
   providers: [MessageService],
   templateUrl: './app.component.html',
