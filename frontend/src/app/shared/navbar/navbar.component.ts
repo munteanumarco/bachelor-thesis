@@ -3,6 +3,7 @@ import { MenuItem, MessageService } from 'primeng/api';
 import { MenubarModule } from 'primeng/menubar';
 import { StorageService } from '../../services/storage.service';
 import { Router } from '@angular/router';
+import { map, Observable } from 'rxjs';
 
 @Component({
   selector: 'app-navbar',
@@ -13,6 +14,7 @@ import { Router } from '@angular/router';
 })
 export class NavbarComponent implements OnInit {
   items: MenuItem[] = [];
+  isLoggedIn!: boolean;
 
   constructor(
     private readonly storageService: StorageService,
@@ -27,10 +29,6 @@ export class NavbarComponent implements OnInit {
 
   userItems: MenuItem[] = [
     {
-      label: 'Logout',
-      command: () => this.onLogout(),
-    },
-    {
       label: 'Dashboard',
       routerLink: ['/dashboard'],
     },
@@ -39,11 +37,13 @@ export class NavbarComponent implements OnInit {
   ngOnInit(): void {
     this.storageService.isLoggedIn$.subscribe((isLoggedIn) => {
       this.items = isLoggedIn ? this.userItems : this.guestItems;
+      this.isLoggedIn = isLoggedIn;
     });
   }
 
   onLogout(): void {
     this.storageService.logout();
+    this.isLoggedIn = false;
     this.messageService.add({
       key: 'bc',
       severity: 'success',

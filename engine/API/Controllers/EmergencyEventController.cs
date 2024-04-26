@@ -2,6 +2,7 @@ using API.Responses;
 using BusinessLayer.DTOs.EmergencyEvent;
 using BusinessLayer.Interfaces;
 using DataAccessLayer.Helpers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
@@ -27,6 +28,7 @@ public class EmergencyEventController : ControllerBase
         return Ok(EmergencyEventResponse.Success(result.Data));
     }
     
+    [Authorize]
     [HttpGet]
     public async Task<ActionResult<IEnumerable<EmergencyEventDto>>> GetEmergencyEventsAsync([FromQuery] GetEventsParameters parameters)
     {

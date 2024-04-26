@@ -1,12 +1,18 @@
-<div
-  class="navbar-container"
-  style="border: 1px solid red; background-color: black"
->
-  <p-menubar [model]="items" class="custom-menubar">
+<div class="h-16">
+  <p-menubar [model]="items" styleClass="h-16">
     <ng-template pTemplate="start">
       <a href="/">
         <img src="../../../assets/images/logo.png" alt="Logo" class="max-h-8"
       /></a>
     </ng-template>
+    @if(isLoggedIn){
+    <ng-template pTemplate="end">
+      <button
+        class="ml-auto p-button-rounded p-button-outlined mr-2"
+        (click)="onLogout()"
+      >
+        Logout
+      </button> </ng-template
+    >}
   </p-menubar>
 </div>

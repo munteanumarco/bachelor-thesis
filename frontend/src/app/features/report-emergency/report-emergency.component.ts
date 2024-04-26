@@ -18,8 +18,8 @@ import { GeolocationService } from '../../services/geolocation.service';
 import { GeocodingService } from '../../services/geocoding.service';
 import { CommonModule } from '@angular/common';
 import { CreateEmergencyEventRequest } from '../../interfaces/emergency/CreateEmergencyEventRequest';
-import { Severity } from '../../interfaces/emergency/Severity';
-import { EmergencyType } from '../../interfaces/emergency/EmergencyType';
+import { severityNames } from '../../interfaces/emergency/Severity';
+import { emergencyTypeNames } from '../../interfaces/emergency/EmergencyType';
 import { EmergencyEventService } from '../../services/emergency-event.service';
 
 @Component({
@@ -35,30 +35,13 @@ export class ReportEmergencyComponent implements OnInit {
   latitude!: number;
   longitude!: number;
 
-  severityNames: { [key in Severity]: string } = {
-    [Severity.Low]: 'Low',
-    [Severity.Medium]: 'Medium',
-    [Severity.High]: 'High',
-    [Severity.Critical]: 'Critical',
-  };
-
-  emergencyTypeNames: { [key in EmergencyType]: string } = {
-    [EmergencyType.Avalanche]: 'Avalanche',
-    [EmergencyType.Drought]: 'Drought',
-    [EmergencyType.Earthquake]: 'Earthquake',
-    [EmergencyType.Fire]: 'Fire',
-    [EmergencyType.Flood]: 'Flood',
-    [EmergencyType.Hurricane]: 'Hurricane',
-    [EmergencyType.Tornado]: 'Tornado',
-    [EmergencyType.Tsunami]: 'Tsunami',
-    [EmergencyType.Volcano]: 'Volcano',
-  };
-
   autocomplete: any;
   @ViewChild('locationInput', { static: true }) locationInputRef!: ElementRef;
 
+  severityNames = severityNames;
+  emergencyTypeNames = emergencyTypeNames;
+
   constructor(
-    private readonly authService: AuthService,
     private formBuilder: FormBuilder,
     private messageService: MessageService,
     private router: Router,

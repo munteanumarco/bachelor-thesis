@@ -5,6 +5,8 @@ import { HttpClient } from '@angular/common/http';
 import { CreateEmergencyEventRequest } from '../interfaces/emergency/CreateEmergencyEventRequest';
 import { Observable } from 'rxjs';
 import { CreateEmergencyEventResponse } from '../interfaces/emergency/CreateEmergencyEventResponse';
+import { PaginatedResponse } from '../interfaces/paginatedResponse';
+import { EmergencyEventDto } from '../interfaces/emergency/EmergencyEventDto';
 
 @Injectable({
   providedIn: 'root',
@@ -20,6 +22,12 @@ export class EmergencyEventService {
     return this.http.post<CreateEmergencyEventResponse>(
       `${this.baseUrl}`,
       data
+    );
+  }
+
+  getEmergencyEvents(): Observable<PaginatedResponse<EmergencyEventDto>> {
+    return this.http.get<PaginatedResponse<EmergencyEventDto>>(
+      `${this.baseUrl}`
     );
   }
 }

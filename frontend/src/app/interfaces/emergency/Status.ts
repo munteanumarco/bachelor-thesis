@@ -1,5 +1,5 @@
 export enum Status {
-  New = 1,
-  InProgress = 2,
-  Resolved = 3,
+  NEW = 1,
+  IN_PROGRESS = 2,
+  RESOLVED = 3,
 }

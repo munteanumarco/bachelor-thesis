@@ -1,11 +1,25 @@
-export enum EmergencyType {
-  Flood = 1,
-  Fire = 2,
-  Earthquake = 3,
-  Hurricane = 4,
-  Tornado = 5,
-  Tsunami = 6,
-  Volcano = 7,
-  Drought = 8,
-  Avalanche = 9,
+enum EmergencyType {
+  FLOOD = 1,
+  FIRE = 2,
+  EARTHQUAKE = 3,
+  HURRICANE = 4,
+  TORNADO = 5,
+  TSUNAMI = 6,
+  VOLCANO = 7,
+  DROUGHT = 8,
+  AVALANCHE = 9,
 }
+
+const emergencyTypeNames: { [key in EmergencyType]: string } = {
+  [EmergencyType.AVALANCHE]: 'Avalanche',
+  [EmergencyType.DROUGHT]: 'Drought',
+  [EmergencyType.EARTHQUAKE]: 'Earthquake',
+  [EmergencyType.FIRE]: 'Fire',
+  [EmergencyType.FLOOD]: 'Flood',
+  [EmergencyType.HURRICANE]: 'Hurricane',
+  [EmergencyType.TORNADO]: 'Tornado',
+  [EmergencyType.TSUNAMI]: 'Tsunami',
+  [EmergencyType.VOLCANO]: 'Volcano',
+};
+
+export { EmergencyType, emergencyTypeNames };

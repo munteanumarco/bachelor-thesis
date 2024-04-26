@@ -5,6 +5,7 @@ import { Injectable } from '@angular/core';
 })
 export class LoaderService {
   private loading: boolean = false;
+  private manualLoading: boolean = false;
 
   constructor() {}
 
@@ -12,7 +13,11 @@ export class LoaderService {
     this.loading = loading;
   }
 
+  setManualLoading(loading: boolean) {
+    this.manualLoading = loading;
+  }
+
   getLoading(): boolean {
-    return this.loading;
+    return this.loading || this.manualLoading;
   }
 }
