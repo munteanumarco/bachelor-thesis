@@ -1,0 +1,64 @@
+@if(event){
+<div
+  class="flex justify-center items-center"
+  style="
+    background-image: url('/assets/images/home.jpeg');
+    height: calc(100vh - 4rem);
+  "
+>
+  <div class="container p-6 bg-white shadow-md rounded-lg max-w-lg">
+    <h1 class="text-2xl font-bold text-black mb-4">Emergency Details</h1>
+
+    <div class="mb-4">
+      <p class="text-gray-600">
+        <span class="font-semibold">Type:</span>
+        {{ emergencyTypeNames[event.type] }}
+      </p>
+      <p class="text-gray-600">
+        <span class="font-semibold">Status:</span>
+        {{ statusNames[event.status] }}
+      </p>
+      <p class="text-gray-600">
+        <span class="font-semibold">Severity:</span>
+        {{ severityNames[event.severity] }}
+      </p>
+      <p class="text-gray-600">
+        <span class="font-semibold">Description:</span>
+        {{ event.description }}
+      </p>
+    </div>
+
+    <div class="mb-4">
+      <h2 class="text-xl text-black font-bold">Location Details</h2>
+      <p class="text-gray-600">
+        <span class="font-semibold">Location:</span>
+        {{ event.location }}
+      </p>
+      <p class="text-gray-600">
+        <span class="font-semibold">Latitude:</span>
+        {{ event.latitude }}
+      </p>
+      <p class="text-gray-600">
+        <span class="font-semibold">Longitude:</span>
+        {{ event.longitude }}
+      </p>
+    </div>
+
+    <div class="mb-4">
+      <h2 class="text-xl text-black font-bold">Timestamps</h2>
+      <p class="text-gray-600">
+        <span class="font-semibold">Reported By:</span>
+        {{ event.reportedBy ? event.reportedBy : "Anonymous" }}
+      </p>
+      <p class="text-gray-600">
+        <span class="font-semibold">Reported At:</span>
+        {{ event.reportedAt | date : "medium" }}
+      </p>
+      <p class="text-gray-600">
+        <span class="font-semibold">Updated At:</span>
+        {{ event.updatedAt | date : "medium" }}
+      </p>
+    </div>
+  </div>
+</div>
+}

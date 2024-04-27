@@ -11,6 +11,7 @@ export interface EmergencyEventDto {
   severity: Severity;
   status: Status;
   type: EmergencyType;
-  createdAt: Date;
+  reportedAt: Date;
   updatedAt: Date;
+  reportedBy: string;
 }

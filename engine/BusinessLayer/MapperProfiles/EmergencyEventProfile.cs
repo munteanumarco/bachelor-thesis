@@ -13,5 +13,6 @@ public class EmergencyEventProfile : Profile
         CreateMap<EmergencyEventCreationDto, EmergencyEvent>();
         CreateMap<EmergencyEvent, EmergencyEventDto>().ReverseMap();
         CreateMap(typeof(PagedResult<>), typeof(PagedResultDto<>));
+        CreateMap<EmergencyEvent, EmergencyEventMarkerDto>();
     }
 }

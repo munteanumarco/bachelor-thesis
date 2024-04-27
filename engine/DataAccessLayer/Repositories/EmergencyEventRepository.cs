@@ -40,4 +40,11 @@ public class EmergencyEventRepository : IEmergencyEventRepository
         var count = await _context.EmergencyEvents.CountAsync();
         return new PagedResult<EmergencyEvent>(items, count, parameters.PageNumber, parameters.PageSize);
     }
+
+    public async Task<IEnumerable<EmergencyEvent>> GetEmergencyEventMarkersAsync()
+    {
+        return await _context.EmergencyEvents
+            .Where(e => e.Status != Status.Resolved)
+            .ToListAsync();
+    }
 }

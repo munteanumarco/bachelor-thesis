@@ -112,6 +112,18 @@ public static class ServiceConfiguration
             };
         });
         
+        var googleSettings = new GoogleSettings();
+        googleSettings.ClientId = Environment.GetEnvironmentVariable("GOOGLE_CLIENT_ID") ?? googleSettings.ClientId;
+        googleSettings.ClientSecret = Environment.GetEnvironmentVariable("GOOGLE_CLIENT_SECRET") ?? googleSettings.ClientSecret;
+       
+        builder.Services.AddSingleton(googleSettings);
+        
+        builder.Services.AddAuthentication().AddGoogle(googleOptions =>
+        {
+            googleOptions.ClientId = googleSettings.ClientId;
+            googleOptions.ClientSecret = googleSettings.ClientSecret;
+        });
+        
         var rabbitMqSettings = new RabbitMQSettings();
         rabbitMqSettings.HostName = Environment.GetEnvironmentVariable("RABBITMQ_HOSTNAME") ?? rabbitMqSettings.HostName;
         rabbitMqSettings.Port = int.Parse(Environment.GetEnvironmentVariable("RABBITMQ_PORT") ?? rabbitMqSettings.Port.ToString());

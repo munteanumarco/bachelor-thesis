@@ -10,6 +10,7 @@ import { ResetPasswordComponent } from './features/reset-password/reset-password
 import { ReportEmergencyComponent } from './features/report-emergency/report-emergency.component';
 import { DashboardComponent } from './features/dashboard/dashboard.component';
 import { userGuard } from './guards/user.guard';
+import { EmergencyDetailsComponent } from './features/emergency-details/emergency-details.component';
 
 export const routes: Routes = [
   {
@@ -61,6 +62,12 @@ export const routes: Routes = [
     path: 'dashboard',
     component: DashboardComponent,
     title: 'Dashboard',
+    canActivate: [userGuard],
+  },
+  {
+    path: 'emergency-details',
+    component: EmergencyDetailsComponent,
+    title: 'Emergency Details',
     canActivate: [userGuard],
   },
 ];

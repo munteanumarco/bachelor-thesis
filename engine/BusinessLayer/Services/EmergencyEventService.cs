@@ -54,4 +54,10 @@ public class EmergencyEventService : IEmergencyEventService
         var paginatedResult = await _emergencyEventRepository.GetEmergencyEventsAsync(parameters);
         return OperationResult<PagedResultDto<EmergencyEventDto>>.Success(_mapper.Map<PagedResultDto<EmergencyEventDto>>(paginatedResult));
     }
+    
+    public async Task<OperationResult<IEnumerable<EmergencyEventMarkerDto>>> GetEmergencyEventMarkersAsync()
+    {
+        var emergencyEvents = await _emergencyEventRepository.GetEmergencyEventMarkersAsync();
+        return OperationResult<IEnumerable<EmergencyEventMarkerDto>>.Success(_mapper.Map<IEnumerable<EmergencyEventMarkerDto>>(emergencyEvents));
+    }
 }

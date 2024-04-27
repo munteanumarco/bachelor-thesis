@@ -37,6 +37,15 @@ public class EmergencyEventController : ControllerBase
         return Ok(result.Data);
     }
     
+    [Authorize]
+    [HttpGet("markers")]
+    public async Task<ActionResult<EmergencyEventMarkerResponse>> GetEmergencyEventMarkersAsync()
+    {
+        var result = await _emergencyEventService.GetEmergencyEventMarkersAsync();
+        if (!result.IsSuccess) return NotFound(EmergencyEventMarkerResponse.Failure(result.Errors));
+        return Ok(EmergencyEventMarkerResponse.Success(result.Data));
+    } 
+    
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [HttpPost]

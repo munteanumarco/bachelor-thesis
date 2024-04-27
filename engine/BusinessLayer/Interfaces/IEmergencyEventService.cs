@@ -11,4 +11,5 @@ public interface IEmergencyEventService
         EmergencyEventCreationDto emergencyEventCreationDto, string? userIdString);
     Task<OperationResult<EmergencyEventDto>> GetEmergencyEventByIdAsync(Guid id);
     Task<OperationResult<PagedResultDto<EmergencyEventDto>>> GetEmergencyEventsAsync(GetEventsParameters parameters);
+    Task<OperationResult<IEnumerable<EmergencyEventMarkerDto>>> GetEmergencyEventMarkersAsync();
 }

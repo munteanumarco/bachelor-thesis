@@ -1,6 +1,9 @@
+using System.Security.Claims;
 using API.Responses;
 using BusinessLayer.DTOs.UserManagement;
 using BusinessLayer.Interfaces;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
@@ -81,5 +84,20 @@ public class UserController : ControllerBase
         var result = await _userService.SetNewPassword(setNewPasswordDto);
         if (!result.IsSuccess) return BadRequest(BaseResponse.Failure(result.Errors));    
         return Ok(BaseResponse.Success());
+    }
+    
+    [HttpGet("signin-google")]
+    public async Task<IActionResult> GoogleLogin()
+    {
+        var response = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        if(response.Principal == null) return BadRequest();
+
+        var name = response.Principal.FindFirstValue(ClaimTypes.Name);
+        var givenName = response.Principal.FindFirstValue(ClaimTypes.GivenName);
+        var email = response.Principal.FindFirstValue(ClaimTypes.Email);
+        //Do something with the claims
+        // var user = await UserService.FindOrCreate(new { name, givenName, email});
+
+        return Ok();
     }
 }
