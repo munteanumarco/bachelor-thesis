@@ -44,12 +44,8 @@ export class NavbarComponent implements OnInit {
   onLogout(): void {
     this.storageService.logout();
     this.isLoggedIn = false;
-    this.messageService.add({
-      key: 'bc',
-      severity: 'success',
-      summary: 'Logout Successful',
-      detail: 'You have successfully logged out!',
+    this.router.navigate(['/']).then(() => {
+      window.location.reload();
     });
-    this.router.navigate(['/']);
   }
 }

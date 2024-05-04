@@ -10,6 +10,7 @@ import { ConfirmEmailRequest } from '../interfaces/auth/ConfirmEmailRequest';
 import { BaseResponse } from '../interfaces/BaseResponse';
 import { UserRoutes } from '../constants/user-routes';
 import { ResetPasswordRequest } from '../interfaces/auth/ResetPasswordRequest';
+import { LoginGoogleCredentials } from '../interfaces/auth/LoginGoogleCredentials';
 
 @Injectable({
   providedIn: 'root',
@@ -64,10 +65,18 @@ export class AuthService {
   }
 
   resetPassword(data: ResetPasswordRequest): Observable<BaseResponse> {
-    console.log(JSON.stringify(data));
     return this.http.post<BaseResponse>(
       `${this.baseUrl}/${UserRoutes.RESET_PASSWORD}`,
       data
+    );
+  }
+
+  loginWithGoogle(
+    credentials: LoginGoogleCredentials
+  ): Observable<LoginResponse> {
+    return this.http.post<LoginResponse>(
+      `${this.baseUrl}/${UserRoutes.GOOGLE_LOGIN}`,
+      credentials
     );
   }
 }

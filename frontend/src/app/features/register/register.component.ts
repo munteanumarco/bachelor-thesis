@@ -11,6 +11,10 @@ import { passwordValidator } from '../../validators/password_validator';
 import { confirmPasswordValidator } from '../../validators/confirm_password_validator';
 import { MessageService } from 'primeng/api';
 import { Router } from '@angular/router';
+import { LoginGoogleCredentials } from '../../interfaces/auth/LoginGoogleCredentials';
+import { CredentialResponse } from 'google-one-tap';
+import { environment } from '../../../environments/environment';
+import { StorageService } from '../../services/storage.service';
 
 @Component({
   selector: 'app-register',
@@ -27,6 +31,7 @@ export class RegisterComponent implements OnInit {
     private readonly authService: AuthService,
     private formBuilder: FormBuilder,
     private messageService: MessageService,
+    private storageService: StorageService,
     private router: Router
   ) {}
 
@@ -39,6 +44,53 @@ export class RegisterComponent implements OnInit {
         '',
         [Validators.required, confirmPasswordValidator('password')],
       ],
+    });
+
+    this.loadGoogleApi();
+  }
+
+  loadGoogleApi() {
+    const script = document.createElement('script');
+    script.src = 'https://accounts.google.com/gsi/client';
+    script.onload = () => {
+      this.initializeGoogleButton();
+    };
+    document.head.appendChild(script);
+  }
+
+  initializeGoogleButton() {
+    google.accounts.id.initialize({
+      client_id: environment.oAuthClientId,
+      callback: this.handleCredentialResponse.bind(this),
+      auto_select: false,
+      cancel_on_tap_outside: true,
+    });
+
+    google.accounts.id.renderButton(
+      // @ts-ignore
+      document.getElementById('google-button'),
+      { theme: 'outline', size: 'large', class: 'w-full' }
+    );
+
+    google.accounts.id.prompt((notification: any) => {
+      // Handle the visibility of the prompt
+    });
+  }
+
+  handleCredentialResponse(response: CredentialResponse) {
+    const data: LoginGoogleCredentials = { credentials: response.credential };
+    this.authService.loginWithGoogle(data).subscribe({
+      next: (data) => {
+        if (data.isSuccess && data.token) {
+          this.storageService.saveUser(data.token);
+          this.router.navigate(['/']);
+        }
+      },
+      error: (error) => {
+        this.errorMessages = error.error.errorMessages;
+        console.log(this.errorMessages);
+        this.showErrorMessage();
+      },
     });
   }
 

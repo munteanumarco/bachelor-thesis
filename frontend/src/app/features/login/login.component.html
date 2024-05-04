@@ -61,7 +61,7 @@
         </div>
       </div>
 
-      <div>
+      <div class="mt-4 space-y-4">
         <button
           type="submit"
           (click)="onSubmit()"
@@ -70,16 +70,20 @@
         >
           Login
         </button>
-      </div>
 
-      <p class="mt-10 text-center text-sm">
-        Not a member?
-        <a
-          href="/register"
-          class="font-semibold leading-6 text-black-600 hover:text-black-500"
-          >Create an account</a
-        >
-      </p>
+        <div class="flex justify-center w-full">
+          <div id="google-button"></div>
+        </div>
+
+        <p class="mt-10 text-center text-sm">
+          Not a member?
+          <a
+            href="/register"
+            class="font-semibold leading-6 text-black-600 hover:text-black-500"
+            >Create an account</a
+          >
+        </p>
+      </div>
     </div>
   </div>
 </div>

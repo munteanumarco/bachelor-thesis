@@ -2,6 +2,8 @@ using System.Security.Claims;
 using API.Responses;
 using BusinessLayer.DTOs.UserManagement;
 using BusinessLayer.Interfaces;
+using BusinessLayer.Settings;
+using Google.Apis.Auth;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
@@ -14,17 +16,19 @@ public class UserController : ControllerBase
 {
     private readonly IUserService _userService;
     private readonly IAuthService _authService;
-    
-    public UserController(IUserService userService, IAuthService authService)
+    private readonly GoogleSettings _googleSettings;
+
+    public UserController(IUserService userService, IAuthService authService, GoogleSettings googleSettings)
     {
         _userService = userService;
         _authService = authService;
+        _googleSettings = googleSettings;
     }
-    
+
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [HttpPost("login")]
-    public async Task<ActionResult<LoginResponse>> LoginAsync([FromBody]LoginUserDto userDto)
+    public async Task<ActionResult<LoginResponse>> LoginAsync([FromBody] LoginUserDto userDto)
     {
         try
         {
@@ -34,7 +38,7 @@ public class UserController : ControllerBase
             var user = result.Data;
             var roles = await _userService.GetRolesAsync(user);
             var tokenString = await _authService.GenerateJwtToken(user, roles);
-        
+
             return Ok(LoginResponse.Success(tokenString));
         }
         catch (Exception ex)
@@ -42,7 +46,7 @@ public class UserController : ControllerBase
             return BadRequest(ex.Message);
         }
     }
-    
+
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [HttpPost("register")]
@@ -50,24 +54,24 @@ public class UserController : ControllerBase
     {
         var result = await _userService.CreateUserAsync(newUser);
         if (!result.IsSuccess) return BadRequest(RegisterResponse.Failure(result.Errors));
-        
+
         var createdUser = result.Data;
-        
+
         await _userService.PublishUserCreatedEventAsync(createdUser);
-        
+
         return Created("api/users", RegisterResponse.Success(createdUser));
     }
-    
+
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [HttpPost("confirm-email")]
-    public async Task<ActionResult<BaseResponse>> ConfirmEmail([FromBody]ConfirmEmailDto confirmEmailDto)
+    public async Task<ActionResult<BaseResponse>> ConfirmEmail([FromBody] ConfirmEmailDto confirmEmailDto)
     {
         var result = await _userService.ConfirmEmailAsync(confirmEmailDto);
         if (!result.IsSuccess) return BadRequest(BaseResponse.Failure(result.Errors));
         return Ok(BaseResponse.Success());
     }
-    
+
     [ProducesResponseType(StatusCodes.Status200OK)]
     [HttpPost("send-reset-password-email")]
     public async Task<ActionResult<BaseResponse>> ResetPassword([FromBody] ForgotPasswordDto forgotPasswordDto)
@@ -75,29 +79,56 @@ public class UserController : ControllerBase
         await _userService.PublishResetPasswordEventAsync(forgotPasswordDto.Email);
         return Ok(BaseResponse.Success());
     }
-    
+
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [HttpPost("set-new-password")]
     public async Task<ActionResult<BaseResponse>> SetNewPassword([FromBody] SetNewPasswordDto setNewPasswordDto)
     {
         var result = await _userService.SetNewPassword(setNewPasswordDto);
-        if (!result.IsSuccess) return BadRequest(BaseResponse.Failure(result.Errors));    
+        if (!result.IsSuccess) return BadRequest(BaseResponse.Failure(result.Errors));
         return Ok(BaseResponse.Success());
     }
-    
-    [HttpGet("signin-google")]
-    public async Task<IActionResult> GoogleLogin()
+
+    [HttpPost("google-login")]
+    public async Task<IActionResult> GoogleLogin([FromBody] LoginGoogleDto dto)
     {
-        var response = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-        if(response.Principal == null) return BadRequest();
+        try
+        {
+            var settings = new GoogleJsonWebSignature.ValidationSettings()
+            {
+                Audience = new List<string> { this._googleSettings.ClientId }
+            };
 
-        var name = response.Principal.FindFirstValue(ClaimTypes.Name);
-        var givenName = response.Principal.FindFirstValue(ClaimTypes.GivenName);
-        var email = response.Principal.FindFirstValue(ClaimTypes.Email);
-        //Do something with the claims
-        // var user = await UserService.FindOrCreate(new { name, givenName, email});
+            var payload = await GoogleJsonWebSignature.ValidateAsync(dto.Credentials, settings);
 
-        return Ok();
+            var result = await _userService.GetUserByEmailAsync(payload.Email);
+            
+            if (!result.IsSuccess)
+            {
+                var newUser = new RegisterUserDto()
+                {
+                    Email = payload.Email,
+                    Username = await _userService.GenerateUsername(payload.Email),
+                    Password = "A" + Guid.NewGuid().ToString()
+                };
+                
+                result = await _userService.CreateUserAsync(newUser);
+                
+                if (!result.IsSuccess) return BadRequest(result.Errors);
+            }
+            
+            var user = result.Data;
+            var roles = await _userService.GetRolesAsync(user);
+            var tokenString = await _authService.GenerateJwtToken(user, roles);
+
+            return Ok(LoginResponse.Success(tokenString));
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+
     }
+    
 }

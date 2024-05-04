@@ -8,6 +8,7 @@ using BusinessLayer.Settings;
 using DataAccessLayer.Entities;
 using MassTransit;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace BusinessLayer.Services;
 
@@ -28,7 +29,32 @@ public class UserService : IUserService
         _roleManager = roleManager;
         _appSettings = appSettings;
     }
-    
+
+    public async Task<string> GenerateUsername(string email)
+    {
+        List<string> allUsernames = await _userManager.Users.Select(u => u.UserName).ToListAsync();
+
+        string[] parts = email.Split('@');
+        string baseUsername = parts[0];
+        string username = baseUsername;
+
+        int suffix = 1;
+        
+        while (allUsernames.Contains(username))
+        {
+            username = baseUsername + suffix;
+            suffix++;
+        }
+
+        return username;
+    }
+
+    public async Task<OperationResult<UserDto>> GetUserByEmailAsync(string email)
+    {
+        var user = await  GetEntityUserAsync(email);
+        return user == null ? OperationResult<UserDto>.Failure(new List<string>(){"User not found"}) : OperationResult<UserDto>.Success(_mapper.Map<UserDto>(user));
+    }
+
     public async Task<OperationResult<UserDto>> LoginAsync(LoginUserDto userDto)
     {
         try
