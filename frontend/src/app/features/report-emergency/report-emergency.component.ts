@@ -42,7 +42,7 @@ export class ReportEmergencyComponent implements OnInit {
   emergencyTypeNames = emergencyTypeNames;
 
   constructor(
-    private formBuilder: FormBuilder,
+     private formBuilder: FormBuilder,
     private messageService: MessageService,
     private router: Router,
     private geolocationService: GeolocationService,
