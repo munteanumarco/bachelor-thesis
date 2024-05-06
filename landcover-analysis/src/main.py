@@ -1,3 +1,7 @@
+from dotenv import load_dotenv
+load_dotenv()
+from utils.dependency_container import DependencyContainer
+from services.gee_service import GEEService
 from config.app_config import AppConfig
 from fastapi import FastAPI
 import logging
@@ -6,9 +10,16 @@ from routers import satellite
 
 app = FastAPI()
 
-if __name__ == '__main__':
-    app.include_router(satellite.router)
+def add_dependencies():
+    dependency_container = DependencyContainer()
     app_config = AppConfig()
+    gee_service = GEEService(app_config)
+    dependency_container.add_dependency(GEEService, gee_service)
+
+if __name__ == '__main__':
+    add_dependencies()
+    app_config = AppConfig()
+    app.include_router(satellite.router)
     try:
         uvicorn.run(
             app,
