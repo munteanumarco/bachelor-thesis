@@ -60,4 +60,11 @@ public class EmergencyEventService : IEmergencyEventService
         var emergencyEvents = await _emergencyEventRepository.GetEmergencyEventMarkersAsync();
         return OperationResult<IEnumerable<EmergencyEventMarkerDto>>.Success(_mapper.Map<IEnumerable<EmergencyEventMarkerDto>>(emergencyEvents));
     }
+
+    public async Task<OperationResult<bool>> AddParticipantAsync(Guid emergencyEventId, string userId)
+    {
+        var result = await _emergencyEventRepository.AddParticipantAsync(emergencyEventId, userId);
+        if (!result) return OperationResult<bool>.Failure(new List<string>(){"Failed to add participant."});
+        return OperationResult<bool>.Success(true);
+    }
 }

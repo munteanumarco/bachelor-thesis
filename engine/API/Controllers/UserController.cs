@@ -22,8 +22,6 @@ public class UserController : ControllerBase
         _googleSettings = googleSettings;
     }
 
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [HttpPost("login")]
     public async Task<ActionResult<LoginResponse>> LoginAsync([FromBody] LoginUserDto userDto)
     {
@@ -44,8 +42,6 @@ public class UserController : ControllerBase
         }
     }
 
-    [ProducesResponseType(StatusCodes.Status201Created)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [HttpPost("register")]
     public async Task<ActionResult<RegisterResponse>> RegisterUser([FromBody] RegisterUserDto newUser)
     {
@@ -59,8 +55,6 @@ public class UserController : ControllerBase
         return Created("api/users", RegisterResponse.Success(createdUser));
     }
 
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [HttpPost("confirm-email")]
     public async Task<ActionResult<BaseResponse>> ConfirmEmail([FromBody] ConfirmEmailDto confirmEmailDto)
     {
@@ -69,7 +63,6 @@ public class UserController : ControllerBase
         return Ok(BaseResponse.Success());
     }
 
-    [ProducesResponseType(StatusCodes.Status200OK)]
     [HttpPost("send-reset-password-email")]
     public async Task<ActionResult<BaseResponse>> ResetPassword([FromBody] ForgotPasswordDto forgotPasswordDto)
     {
@@ -77,8 +70,6 @@ public class UserController : ControllerBase
         return Ok(BaseResponse.Success());
     }
 
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [HttpPost("set-new-password")]
     public async Task<ActionResult<BaseResponse>> SetNewPassword([FromBody] SetNewPasswordDto setNewPasswordDto)
     {
@@ -125,7 +116,5 @@ public class UserController : ControllerBase
         {
             return BadRequest(ex.Message);
         }
-
     }
-    
 }

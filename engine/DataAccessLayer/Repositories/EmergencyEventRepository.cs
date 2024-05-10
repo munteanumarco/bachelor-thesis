@@ -11,10 +11,12 @@ namespace DataAccessLayer.Repositories;
 public class EmergencyEventRepository : IEmergencyEventRepository
 {
     private readonly EngineServiceContext _context;
+    private readonly Serilog.ILogger _logger;
 
     public EmergencyEventRepository(EngineServiceContext context, ILogger logger)
     {
         _context = context;
+        _logger = logger;
     }
 
     public async Task<EmergencyEvent> CreateEmergencyEventAsync(EmergencyEvent emergencyEvent)
@@ -46,5 +48,27 @@ public class EmergencyEventRepository : IEmergencyEventRepository
         return await _context.EmergencyEvents
             .Where(e => e.Status != Status.Resolved)
             .ToListAsync();
+    }
+
+    public async Task<bool> AddParticipantAsync(Guid emergencyEventId, string userId)
+    {
+        try
+        {
+
+            await _context.Participants.AddAsync(new Participant
+            {
+                EmergencyEventId = emergencyEventId,
+                UserId = userId
+            });
+
+            await _context.SaveChangesAsync();
+            return true;
+        }
+        catch (Exception ex)
+        {
+            _logger.Error(ex, "An error occurred while adding a participant to an emergency event.");
+            return false;
+        }
+
     }
 }

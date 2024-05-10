@@ -14,11 +14,12 @@ public class EngineServiceContext : IdentityDbContext<EmergencyAppUser>
     }
     
     public DbSet<EmergencyEvent> EmergencyEvents { get; set; }
+    public DbSet<Participant> Participants { get; set; }
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-
+        
         var roles = RoleConstants.Roles.Select(roleName => new IdentityRole{ Name = roleName, NormalizedName = roleName.ToUpper()}).ToList();
 
         modelBuilder.Entity<IdentityRole>().HasData(roles);

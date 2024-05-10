@@ -18,8 +18,6 @@ public class EmergencyEventController : ControllerBase
         _emergencyEventService = emergencyEventService;
     }
     
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
     [HttpGet("{id}")]
     public async Task<ActionResult<EmergencyEventDto>> GetEmergencyEventAsync([FromRoute] Guid id)
     {
@@ -46,8 +44,6 @@ public class EmergencyEventController : ControllerBase
         return Ok(EmergencyEventMarkerResponse.Success(result.Data));
     } 
     
-    [ProducesResponseType(StatusCodes.Status201Created)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [HttpPost]
     public async Task<ActionResult<EmergencyEventResponse>> CreateEmergencyEventAsync([FromBody] EmergencyEventCreationDto emergencyEventCreationDto)
     {
@@ -65,4 +61,12 @@ public class EmergencyEventController : ControllerBase
         }
     }
     
+    [HttpPost("{emergencyEventId}/participants")]
+    public async Task<ActionResult<BaseResponse>> AddParticipantAsync([FromRoute] Guid emergencyEventId)
+    {
+        var userId = HttpContext.Items["userId"] as string;
+        var result = await _emergencyEventService.AddParticipantAsync(emergencyEventId, userId);
+        if (!result.IsSuccess) return BadRequest(BaseResponse.Failure(result.Errors));
+        return Ok(BaseResponse.Success());
+    }
 }

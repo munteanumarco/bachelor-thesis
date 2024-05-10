@@ -9,4 +9,5 @@ public interface IEmergencyEventRepository
     Task<EmergencyEvent?> GetEmergencyEventByIdAsync(Guid id);
     Task<PagedResult<EmergencyEvent>> GetEmergencyEventsAsync(GetEventsParameters parameters);
     Task<IEnumerable<EmergencyEvent>> GetEmergencyEventMarkersAsync();
+    Task<bool> AddParticipantAsync(Guid emergencyEventId, string userId);
 }
