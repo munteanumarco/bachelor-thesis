@@ -1,9 +1,13 @@
+using System.Text;
 using BusinessLayer.Interfaces;
 using BusinessLayer.RabbitMQ.Consumers;
 using BusinessLayer.Services;
 using BusinessLayer.Settings;
 using dotenv.net;
 using MassTransit;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using Serilog;
 
 namespace API.Configuration;
@@ -58,17 +62,74 @@ public class ServiceConfiguration
             });
         });
         
+        var jwtSettings = new JwtSettings();
+        jwtSettings.JwtIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER") ?? jwtSettings.JwtIssuer;
+        jwtSettings.JwtAudience = Environment.GetEnvironmentVariable("JWT_AUDIENCE") ?? jwtSettings.JwtAudience;
+        jwtSettings.JwtKey = Environment.GetEnvironmentVariable("JWT_KEY") ?? jwtSettings.JwtKey;
+        jwtSettings.JwtAlgorithm = Environment.GetEnvironmentVariable("JWT_ALGORITHM") ?? jwtSettings.JwtAlgorithm;
+        
+        builder.Services.AddSingleton(jwtSettings);
+        
+        builder.Services.AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme =JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme =JwtBearerDefaults.AuthenticationScheme;
+        }).AddJwtBearer(options=>
+        {
+            options.TokenValidationParameters = new TokenValidationParameters()
+            {
+                ValidateActor = true,
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                RequireExpirationTime = true,
+                ValidateIssuerSigningKey = true,
+                ValidIssuer = jwtSettings.JwtIssuer,
+                ValidAudience = jwtSettings.JwtAudience,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.JwtKey))
+            };
+        });
+
+        
         Log.Logger = new LoggerConfiguration()
             .WriteTo.Console()
-            .WriteTo.File("logs/engine-service.log", rollingInterval: RollingInterval.Day)
+            .WriteTo.File("logs/communication-service.log", rollingInterval: RollingInterval.Day)
             .CreateLogger();
 
         builder.Host.UseSerilog();
         builder.Services.AddSingleton<Serilog.ILogger>(provider => Log.Logger);
         builder.Services.AddSingleton<IMailSendingService, MailSendingService>();
+        builder.Services.AddScoped<IChatService, ChatService>();
         
         builder.Services.AddControllers();
-        builder.Services.AddSwaggerGen();
+        builder.Services.AddEndpointsApiExplorer();
+        builder.Services.AddSwaggerGen(options =>
+        {
+            options.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+            {
+                Name = "Authorization",
+                Type = Microsoft.OpenApi.Models.SecuritySchemeType.ApiKey,
+                Scheme = "Bearer",
+                BearerFormat = "JWT",
+                In = Microsoft.OpenApi.Models.ParameterLocation.Header,
+                Description = "JWT Authorization header using Bearer scheme. \r\n\r\n Enter 'Bearer' [space] and then your token in the text input bellow.\r\n\r\nExample: \"Bearer 1safsadasf\"",
+            });
+
+            options.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
+            {
+                {
+                    new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference
+                        {
+                            Type = ReferenceType.SecurityScheme,
+                            Id = "Bearer"
+                        }
+                    },
+                    Array.Empty<string>()
+                }
+            });
+        });
+        
         builder.Services.AddAuthentication();
         builder.Services.AddAuthorization();
     }
