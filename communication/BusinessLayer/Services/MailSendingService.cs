@@ -11,7 +11,7 @@ namespace BusinessLayer.Services;
 public class MailSendingService : IMailSendingService
 {
     private readonly MailSettings _mailSettings;
-    private readonly Serilog.ILogger _logger;
+    private readonly ILogger _logger;
 
     public MailSendingService(MailSettings mailSettings, ILogger logger)
     {

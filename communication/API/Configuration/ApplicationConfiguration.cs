@@ -1,3 +1,5 @@
+using API.Hubs;
+
 namespace API.Configuration;
 
 public class ApplicationConfiguration
@@ -14,5 +16,6 @@ public class ApplicationConfiguration
         app.UseAuthentication();
         app.UseAuthorization();
         app.MapControllers();
+        app.MapHub<ChatHub>("/chat-hub");
     }
 }

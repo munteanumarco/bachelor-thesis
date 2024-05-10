@@ -1,8 +1,11 @@
 using System.Text;
+using AutoMapper;
 using BusinessLayer.Interfaces;
 using BusinessLayer.RabbitMQ.Consumers;
 using BusinessLayer.Services;
 using BusinessLayer.Settings;
+using DataAccessLayer.Interfaces;
+using DataAccessLayer.Repositories;
 using dotenv.net;
 using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -96,9 +99,12 @@ public class ServiceConfiguration
             .CreateLogger();
 
         builder.Host.UseSerilog();
+        builder.Services.AddSignalR();
+        builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
         builder.Services.AddSingleton<Serilog.ILogger>(provider => Log.Logger);
         builder.Services.AddSingleton<IMailSendingService, MailSendingService>();
         builder.Services.AddScoped<IChatService, ChatService>();
+        builder.Services.AddScoped<IChatRepository, ChatRepository>();
         
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();

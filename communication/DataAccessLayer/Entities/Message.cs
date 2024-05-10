@@ -7,4 +7,5 @@ public class Message
     public string UserId { get; set; }
     public DateTime Date {  get; set; }
     public ChatMessage ChatMessage { get; set; }
+    public EmergencyAppUser User { get; set; }
 }
