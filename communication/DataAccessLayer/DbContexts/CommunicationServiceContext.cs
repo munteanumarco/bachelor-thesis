@@ -1,9 +1,10 @@
 using DataAccessLayer.Entities;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace DataAccessLayer.DbContexts;
 
-public class CommunicationServiceContext : DbContext
+public class CommunicationServiceContext : IdentityDbContext<EmergencyAppUser>
 {
     public CommunicationServiceContext(DbContextOptions<CommunicationServiceContext> options) 
         : base(options)
@@ -13,6 +14,7 @@ public class CommunicationServiceContext : DbContext
     public DbSet<Message> Messages { get; set; }
     public DbSet<ChatMessage> ChatMessages { get; set; }
     public DbSet<ChatEvent> ChatEvents { get; set; }
+    public DbSet<Participant> Participants { get; set; }
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -38,5 +40,23 @@ public class CommunicationServiceContext : DbContext
             .HasForeignKey<ChatMessage>(chatMessage => chatMessage.MessageId)
             .IsRequired()
             .OnDelete(DeleteBehavior.Cascade);
+        
+        modelBuilder.Entity<Participant>()
+            .HasIndex(p => new { p.EmergencyEventId, p.UserId })
+            .IsUnique();
+
+        modelBuilder.Entity<Participant>()
+            .HasOne(participant => participant.User)
+            .WithMany(user => user.Participants)
+            .HasForeignKey(participant => participant.UserId)
+            .IsRequired()
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Participant>()
+            .HasOne(participant => participant.Event)
+            .WithMany(evnt => evnt.Participants)
+            .HasForeignKey(participant => participant.EmergencyEventId)
+            .IsRequired()
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

@@ -14,4 +14,5 @@ public class EmergencyEvent
     public DateTime ReportedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
     public ChatEvent ChatEvent { get; set; }
+    public ICollection<Participant> Participants { get; set; }
 }

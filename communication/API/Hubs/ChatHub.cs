@@ -1,6 +1,7 @@
 // using BusinessLayer.Interfaces;
 // using Microsoft.AspNetCore.Authorization;
 // using Microsoft.AspNetCore.SignalR;
+// using Microsoft.IdentityModel.Tokens;
 //
 // namespace API.Hubs;
 //
@@ -53,5 +54,4 @@
 //
 //         await base.OnDisconnectedAsync(exception);
 //     }
-// }
 // }
