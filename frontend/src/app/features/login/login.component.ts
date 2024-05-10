@@ -65,7 +65,6 @@ export class LoginComponent implements OnInit {
       next: (data) => {
         if (data.isSuccess && data.token) {
           this.storageService.saveUser(data.token);
-          this.showSuccessLoginMessage();
           this.router.navigate(['/']).then(() => {
             window.location.reload();
           });
@@ -84,7 +83,6 @@ export class LoginComponent implements OnInit {
       next: (data) => {
         if (data.isSuccess && data.token) {
           this.storageService.saveUser(data.token);
-          this.showSuccessLoginMessage();
           this.router.navigate(['/']);
         }
       },
@@ -93,15 +91,6 @@ export class LoginComponent implements OnInit {
         console.log(this.errorMessages);
         this.showErrorMessage();
       },
-    });
-  }
-
-  showSuccessLoginMessage(): void {
-    this.messageService.add({
-      key: 'bc',
-      severity: 'success',
-      summary: 'Login Successful',
-      detail: 'You have successfully logged in!',
     });
   }
 
