@@ -5,10 +5,12 @@ import { LoaderService } from '../../services/loader.service';
 import { retryOperation } from '../../utils/retry-promise';
 import { EmergencyEventService } from '../../services/emergency-event.service';
 import { getIconForSeverity } from '../../utils/marker-icons/get-icon-for-severity';
-import { severityNames } from '../../interfaces/emergency/Severity';
-import { emergencyTypeNames } from '../../interfaces/emergency/EmergencyType';
-import { statusNames } from '../../interfaces/emergency/Status';
+import { getSeverityName } from '../../interfaces/emergency/Severity';
+import { getEmergencyTypeName } from '../../interfaces/emergency/EmergencyType';
+import { getStatusName } from '../../interfaces/emergency/Status';
 import { RouterModule } from '@angular/router';
+import { formatDate } from '../../utils/date_formatter';
+import { signalUpdateFn } from '@angular/core/primitives/signals';
 
 @Component({
   selector: 'app-emergency-map',
@@ -35,10 +37,11 @@ export class EmergencyMapComponent implements OnInit, AfterViewInit {
         });
 
         const popupHtml = this.createPopupContent(
-          emergencyTypeNames[event.type],
-          severityNames[event.severity],
-          statusNames[event.status],
-          'emergency-details?eventId=' + event.id
+          getEmergencyTypeName(event.type),
+          getSeverityName(event.severity),
+          getStatusName(event.status),
+          'emergency-details?eventId=' + event.id,
+          formatDate(new Date(event.updatedAt))
         );
         marker.bindPopup(popupHtml);
         this.markers.push(marker);
@@ -69,13 +72,15 @@ export class EmergencyMapComponent implements OnInit, AfterViewInit {
     eventType: string,
     severity: string,
     status: string,
-    link: string
+    link: string,
+    updatedAt: string
   ): string {
     return `
       <div class="p-2 rounded">
-        <div class="font-bold text-lg">Event: ${eventType}</div>
-        <div class="text-gray-600">Severity: ${severity}</div>
-        <div class="text-gray-600">Status: ${status}</div>
+        <div class="font-bold text-lg">Event: <b>${eventType}</b></div>
+        <div class="text-gray-600">Severity: <b>${severity}</b></div>
+        <div class="text-gray-600">Status: <b>${status}</b></div>
+        <div class="text-gray-600">Last Updated: <b>${updatedAt}</b></div>
         <a href="${link}"><button class="mt-2 bg-black text-white px-4 py-2 rounded hover:bg-gray-700 transition-all duration-300">
           More Info
         </button></a>

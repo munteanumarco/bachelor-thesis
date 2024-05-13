@@ -1,6 +1,6 @@
 @if(event){
 <div
-  class="flex justify-center items-center"
+  class="flex flex-col justify-center items-center gap-4"
   style="
     background-image: url('/assets/images/home.jpeg');
     height: calc(100vh - 4rem);
@@ -12,15 +12,15 @@
     <div class="mb-4">
       <p class="text-gray-600">
         <span class="font-semibold">Type:</span>
-        {{ emergencyTypeNames[event.type] }}
+        {{ getEmergencyTypeName(event.type) }}
       </p>
       <p class="text-gray-600">
         <span class="font-semibold">Status:</span>
-        {{ statusNames[event.status] }}
+        {{ getStatusName(event.status) }}
       </p>
       <p class="text-gray-600">
         <span class="font-semibold">Severity:</span>
-        {{ severityNames[event.severity] }}
+        {{ getSeverityName(event.severity) }}
       </p>
       <p class="text-gray-600">
         <span class="font-semibold">Description:</span>
@@ -58,6 +58,14 @@
         <span class="font-semibold">Updated At:</span>
         {{ event.updatedAt | date : "medium" }}
       </p>
+    </div>
+    <div class="flex justify-center">
+      <button
+        class="px-4 py-2 font-bold text-white bg-black rounded hover:bg-gray-900"
+        (click)="addParticipant()"
+      >
+        Participate
+      </button>
     </div>
   </div>
 </div>

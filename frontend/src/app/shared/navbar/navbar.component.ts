@@ -3,7 +3,6 @@ import { MenuItem, MessageService } from 'primeng/api';
 import { MenubarModule } from 'primeng/menubar';
 import { StorageService } from '../../services/storage.service';
 import { Router } from '@angular/router';
-import { map, Observable } from 'rxjs';
 
 @Component({
   selector: 'app-navbar',
@@ -31,6 +30,10 @@ export class NavbarComponent implements OnInit {
     {
       label: 'Dashboard',
       routerLink: ['/dashboard'],
+    },
+    {
+      label: 'Manage Events',
+      routerLink: ['/manage-events'],
     },
   ];
 

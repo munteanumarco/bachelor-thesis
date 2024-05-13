@@ -54,7 +54,6 @@ public class EmergencyEventRepository : IEmergencyEventRepository
     {
         try
         {
-
             await _context.Participants.AddAsync(new Participant
             {
                 EmergencyEventId = emergencyEventId,
@@ -70,5 +69,10 @@ public class EmergencyEventRepository : IEmergencyEventRepository
             return false;
         }
 
+    }
+
+    public async Task<bool> IsParticipantAsync(Guid emergencyEventId, string userId)
+    {
+        return await _context.Participants.AnyAsync(participant => participant.EmergencyEventId == emergencyEventId && participant.UserId == userId);
     }
 }

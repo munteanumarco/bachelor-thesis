@@ -9,6 +9,7 @@ import { PaginatedResponse } from '../interfaces/paginatedResponse';
 import { EmergencyEventDto } from '../interfaces/emergency/EmergencyEventDto';
 import { EmergencyEventMarkersResponse } from '../interfaces/emergency/EmergencyEventMarkersResponse';
 import { GetEmergencyEventResponse } from '../interfaces/emergency/GetEmergencyEventResponse';
+import { BaseResponse } from '../interfaces/BaseResponse';
 
 @Injectable({
   providedIn: 'root',
@@ -36,6 +37,13 @@ export class EmergencyEventService {
   getEmergencyEvent(eventId: string): Observable<GetEmergencyEventResponse> {
     return this.http.get<GetEmergencyEventResponse>(
       `${this.baseUrl}/${eventId}`
+    );
+  }
+
+  addParticipant(eventId: string): Observable<BaseResponse> {
+    return this.http.post<BaseResponse>(
+      `${this.baseUrl}/${eventId}/${EmergencyEventsRoutes.PARTICIPANTS}`,
+      {}
     );
   }
 }

@@ -10,4 +10,6 @@ const statusNames: { [key in Status]: string } = {
   [Status.RESOLVED]: 'Resolved',
 };
 
-export { Status, statusNames };
+const getStatusName = (status: Status): string => statusNames[status];
+
+export { Status, getStatusName };

@@ -42,6 +42,7 @@ public class ServiceConfiguration
         {
             x.AddConsumer<UserCreatedEventConsumer>();
             x.AddConsumer<ResetPasswordEventConsumer>();
+            x.AddConsumer<EmergencyReportedEventConsumer>();
 
             x.UsingRabbitMq((context, cfg) =>
             {
@@ -61,6 +62,12 @@ public class ServiceConfiguration
                 {
                     e.Consumer<ResetPasswordEventConsumer>(context);
                     e.Bind("ResetPasswordEvent");
+                });
+                
+                cfg.ReceiveEndpoint("emergency-reported-queue", e =>
+                {
+                    e.Consumer<EmergencyReportedEventConsumer>(context);
+                    e.Bind("EmergencyReportedEvent");
                 });
             });
         });

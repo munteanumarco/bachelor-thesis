@@ -50,9 +50,11 @@ public class EmergencyEventController : ControllerBase
         try
         {
             var userIdString = HttpContext.Items["userId"] as string;
+            var username = HttpContext.Items["username"] as string;
             var result = await _emergencyEventService.CreateEmergencyEventAsync(emergencyEventCreationDto, userIdString);
             if (!result.IsSuccess) return BadRequest(EmergencyEventResponse.Failure(result.Errors));
             var emergencyEvent = result.Data;
+            await _emergencyEventService.PublishEmergencyReportedAsync(emergencyEvent, username);
             return Created($"api/emergency-events/{emergencyEvent.Id}", EmergencyEventResponse.Success(emergencyEvent));
         }
         catch (Exception ex)

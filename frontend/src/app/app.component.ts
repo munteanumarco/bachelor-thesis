@@ -42,6 +42,7 @@ export class AppComponent {
       '/check-email',
       '/reset-password',
       '/report-emergency',
+      '/chat',
     ];
     this.showNavbar = !NO_NAVBAR_PREFIXES.some((prefix) =>
       url.startsWith(prefix)

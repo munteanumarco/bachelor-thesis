@@ -10,4 +10,5 @@ public class EmergencyEventMarkerDto
     public Status Status { get; set; }
     public decimal Latitude { get; set; }
     public decimal Longitude { get; set; }
+    public DateTime UpdatedAt { get; set; }
 }

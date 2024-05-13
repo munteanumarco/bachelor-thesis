@@ -9,4 +9,5 @@ public interface IChatRepository
     Task<IEnumerable<Guid>> GetUserChatIds(string userId);
     Task<string> SaveChatMessageAsync(ChatMessage newChatMessage);
     Task<PagedResult<Message>> GetChatMessagesAsync(Guid chatId, int pageNumber, int pageSize);
+    Task AddChatEventAsync(Guid emergencyEventId, string name);
 }

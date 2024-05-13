@@ -12,4 +12,6 @@ const severityNames: { [key in Severity]: string } = {
   [Severity.CRITICAL]: 'Critical',
 };
 
-export { Severity, severityNames };
+const getSeverityName = (severity: Severity): string => severityNames[severity];
+
+export { Severity, getSeverityName, severityNames };

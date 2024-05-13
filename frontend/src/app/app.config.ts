@@ -5,11 +5,17 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { jwtInterceptor } from './interceptors/jwt.interceptor';
 import { loadingInterceptor } from './interceptors/loading.interceptor';
+import { NbChatModule, NbLayoutModule, NbThemeModule } from '@nebular/theme';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
     provideHttpClient(withInterceptors([jwtInterceptor, loadingInterceptor])),
-    importProvidersFrom(BrowserAnimationsModule),
+    importProvidersFrom(
+      BrowserAnimationsModule,
+      NbThemeModule.forRoot({ name: 'default' }), // Nebular theme initialization
+      NbLayoutModule,
+      NbChatModule
+    ),
   ],
 };

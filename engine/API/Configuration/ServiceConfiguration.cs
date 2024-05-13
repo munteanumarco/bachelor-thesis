@@ -137,6 +137,7 @@ public static class ServiceConfiguration
                 });
                 cfg.Message<UserCreatedEvent>(m => m.SetEntityName("UserCreatedEvent"));
                 cfg.Message<ResetPasswordEvent>(m => m.SetEntityName("ResetPasswordEvent"));
+                cfg.Message<EmergencyReportedEvent>(m => m.SetEntityName("EmergencyReportedEvent"));
             });
         });
         

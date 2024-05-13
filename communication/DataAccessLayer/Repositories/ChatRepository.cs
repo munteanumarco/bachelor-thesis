@@ -65,5 +65,15 @@ public class ChatRepository : IChatRepository
         
         return new PagedResult<Message>(messages, totalCount, pageNumber, pageSize);
     }
-
+    
+    public async Task AddChatEventAsync(Guid emergencyEventId, string name)
+    {
+        var chatEvent = new ChatEvent()
+        {
+            EmergencyEventId = emergencyEventId,
+            Name = name
+        };
+        await _context.ChatEvents.AddAsync(chatEvent);
+        await _context.SaveChangesAsync();
+    }
 }

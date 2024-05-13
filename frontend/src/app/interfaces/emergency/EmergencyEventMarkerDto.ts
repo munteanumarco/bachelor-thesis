@@ -9,4 +9,5 @@ export interface EmergencyEventMarkerDto {
   status: Status;
   latitude: number;
   longitude: number;
+  updatedAt: Date;
 }

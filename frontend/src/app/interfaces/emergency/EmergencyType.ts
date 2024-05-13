@@ -22,4 +22,7 @@ const emergencyTypeNames: { [key in EmergencyType]: string } = {
   [EmergencyType.VOLCANO]: 'Volcano',
 };
 
-export { EmergencyType, emergencyTypeNames };
+const getEmergencyTypeName = (emergencyType: EmergencyType): string =>
+  emergencyTypeNames[emergencyType];
+
+export { EmergencyType, getEmergencyTypeName, emergencyTypeNames };

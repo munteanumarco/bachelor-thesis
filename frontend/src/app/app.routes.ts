@@ -11,6 +11,8 @@ import { ReportEmergencyComponent } from './features/report-emergency/report-eme
 import { DashboardComponent } from './features/dashboard/dashboard.component';
 import { userGuard } from './guards/user.guard';
 import { EmergencyDetailsComponent } from './features/emergency-details/emergency-details.component';
+import { ManageEventsComponent } from './features/manage-events/manage-events.component';
+import { ChatComponent } from './features/chat/chat.component';
 
 export const routes: Routes = [
   {
@@ -68,6 +70,18 @@ export const routes: Routes = [
     path: 'emergency-details',
     component: EmergencyDetailsComponent,
     title: 'Emergency Details',
+    canActivate: [userGuard],
+  },
+  {
+    path: 'manage-events',
+    component: ManageEventsComponent,
+    title: 'Manage Events',
+    canActivate: [userGuard],
+  },
+  {
+    path: 'chat',
+    component: ChatComponent,
+    title: 'Chat',
     canActivate: [userGuard],
   },
 ];

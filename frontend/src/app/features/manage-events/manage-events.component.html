@@ -1,0 +1,95 @@
+<div class="card">
+  <p-table
+    #dt1
+    [value]="emergencyEvents"
+    dataKey="id"
+    [rows]="10"
+    [rowsPerPageOptions]="[10, 25, 50]"
+    [loading]="loading"
+    [paginator]="true"
+    [globalFilterFields]="[
+      'name',
+      'country.name',
+      'representative.name',
+      'status'
+    ]"
+  >
+    <ng-template pTemplate="header">
+      <tr>
+        <th style="min-width: 15rem">
+          <div class="flex align-items-center">
+            <p>Type</p>
+            <p-columnFilter type="text" field="type" display="menu" />
+          </div>
+        </th>
+        <th style="min-width: 15rem">
+          <div class="flex align-items-center">
+            Status
+            <p-columnFilter type="text" field="country.name" display="menu" />
+          </div>
+        </th>
+        <th style="min-width: 15rem">
+          <div class="flex align-items-center">
+            Location
+            <p-columnFilter type="text" field="text" display="menu" />
+          </div>
+        </th>
+        <th style="min-width: 15rem">
+          <div class="flex justify-left">
+            <p>Severity</p>
+            <p-columnFilter type="text" field="country.name" display="menu" />
+          </div>
+        </th>
+        <th style="min-width: 15rem">
+          <div class="flex align-items-center">Actions</div>
+        </th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-emergencyEvent>
+      <tr>
+        <td>
+          {{ getEmergencyTypeName(emergencyEvent.type) }}
+        </td>
+        <td>
+          <p-tag
+            [value]="getStatusName(emergencyEvent.status)"
+            [severity]="getStatusPrimeNg(emergencyEvent.status)"
+          />
+        </td>
+        <td>
+          {{ emergencyEvent.location }}
+        </td>
+        <td>
+          <p-tag
+            [value]="getSeverityName(emergencyEvent.severity)"
+            [severity]="getSeverityPrimeNg(emergencyEvent.severity)"
+          ></p-tag>
+        </td>
+
+        <td>
+          <div class="flex gap-4">
+            <button
+              type="submit"
+              class="flex justify-center rounded-md bg-black text-white px-3 py-1.5 text-sm font-semibold leading-6 shadow-sm hover:bg-gray-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600 disabled:bg-opacity-30 disabled:cursor-not-allowed"
+              [routerLink]="['/emergency-details']"
+              [queryParams]="{ eventId: emergencyEvent.id }"
+            >
+              Details
+            </button>
+            <button
+              type="submit"
+              class="flex justify-center rounded-md bg-black text-white px-3 py-1.5 text-sm font-semibold leading-6 shadow-sm hover:bg-gray-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600 disabled:bg-opacity-30 disabled:cursor-not-allowed"
+            >
+              Chat
+            </button>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="7">No Emergency events found.</td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>

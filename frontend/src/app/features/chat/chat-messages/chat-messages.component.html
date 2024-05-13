@@ -1,0 +1,7 @@
+<div class="flex flex-col space-y-4 p-4 overflow-y-auto" style="height: 60vh">
+  @for (message of messages; track message.id) {
+  <app-message-card [message]="message" />
+  }@empty {
+  <p class="text-gray-600">No messages yet</p>
+  }
+</div>

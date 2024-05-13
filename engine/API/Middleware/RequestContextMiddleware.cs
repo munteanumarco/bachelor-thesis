@@ -21,8 +21,10 @@ public class RequestContextMiddleware
     private static void ExtractUserId(HttpContext context)
     {
         var userId = context.User.Claims.FirstOrDefault(c => c.Type == CustomClaimTypes.UserId)?.Value;
+        var username = context.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value;
         if (!string.IsNullOrEmpty(userId))
         {
+            context.Items["username"] = username;
             context.Items["userId"] = userId;
         }
     }
