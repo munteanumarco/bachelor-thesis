@@ -20,6 +20,7 @@
     "@angular/platform-browser": "^17.0.0",
     "@angular/platform-browser-dynamic": "^17.0.0",
     "@angular/router": "^17.0.0",
+    "@microsoft/signalr": "^8.0.0",
     "@nebular/eva-icons": "^13.0.0",
     "@types/google-one-tap": "^1.2.6",
     "@types/googlemaps": "^3.43.3",

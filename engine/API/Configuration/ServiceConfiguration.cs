@@ -26,12 +26,14 @@ public static class ServiceConfiguration
 
         builder.Services.AddCors(options =>
         {
-            options.AddPolicy("AllowSpecificOrigin",
+            options.AddPolicy("CorsPolicy",
                 builder =>
                 {
                     builder.WithOrigins("http://localhost:4200")
                         .AllowAnyHeader()
+                        .AllowCredentials()
                         .AllowAnyMethod();
+
                 });
         });
         

@@ -7,7 +7,7 @@ using ILogger = Serilog.ILogger;
 
 namespace API.Hubs;
 
-[Authorize]
+// [Authorize]
 public class ChatHub : Hub
 {
     private readonly IChatService _chatService;

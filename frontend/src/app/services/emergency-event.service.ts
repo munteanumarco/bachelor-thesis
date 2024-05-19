@@ -10,12 +10,13 @@ import { EmergencyEventDto } from '../interfaces/emergency/EmergencyEventDto';
 import { EmergencyEventMarkersResponse } from '../interfaces/emergency/EmergencyEventMarkersResponse';
 import { GetEmergencyEventResponse } from '../interfaces/emergency/GetEmergencyEventResponse';
 import { BaseResponse } from '../interfaces/BaseResponse';
+import { ApiGatewayServices } from '../constants/api-gateway-services';
 
 @Injectable({
   providedIn: 'root',
 })
 export class EmergencyEventService {
-  private baseUrl = `${environment.baseUrl}/${EmergencyEventsRoutes.BASE}`;
+  private baseUrl = `${environment.apiGateway}/${ApiGatewayServices.ENGINE}/${EmergencyEventsRoutes.BASE}`;
 
   constructor(private readonly http: HttpClient) {}
 

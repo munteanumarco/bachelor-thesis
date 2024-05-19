@@ -6,7 +6,7 @@ public static class ApplicationConfiguration
 {
     public static async void ConfigureApp(WebApplication app)
     {
-        app.UseCors("AllowSpecificOrigin");
+        app.UseCors("CorsPolicy");
         
         if (app.Environment.IsDevelopment())
         {
@@ -14,7 +14,6 @@ public static class ApplicationConfiguration
             app.UseSwaggerUI();
         }
         
-        app.UseHttpsRedirection();
         app.UseAuthentication();
         app.UseAuthorization();
         app.UseMiddleware<RequestContextMiddleware>();

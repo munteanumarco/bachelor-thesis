@@ -21,6 +21,18 @@ public class ServiceConfiguration
     {
         DotEnv.Load(options: new DotEnvOptions(envFilePaths: new[] {"Configuration/.env"}));
         
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy("AllowSpecificOrigin",
+                builder =>
+                {
+                    builder.WithOrigins("http://localhost:4200")
+                        .AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .AllowCredentials();
+                });
+        });
+        
         var mailSettings = new MailSettings();
         mailSettings.Mail = Environment.GetEnvironmentVariable("MAIL") ?? mailSettings.Mail;
         mailSettings.DisplayName = Environment.GetEnvironmentVariable("MAIL_DISPLAY_NAME") ?? mailSettings.DisplayName;

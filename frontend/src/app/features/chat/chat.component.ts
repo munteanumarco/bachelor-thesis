@@ -1,9 +1,10 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { ChatHeaderComponent } from './chat-header/chat-header.component';
 import { ChatMessagesComponent } from './chat-messages/chat-messages.component';
 import { ChatFooterComponent } from './chat-footer/chat-footer.component';
 import { Message } from '../../interfaces/chat/message';
 import { MessageType } from '../../interfaces/chat/messageType';
+import { SignalRService } from '../../services/signalr.service';
 
 const mockMessages: Message[] = [
   {
@@ -195,6 +196,23 @@ const mockMessages: Message[] = [
   templateUrl: './chat.component.html',
   styleUrl: './chat.component.scss',
 })
-export class ChatComponent {
+export class ChatComponent implements OnInit {
   @Input() messages: Message[] = mockMessages;
+
+  constructor(private readonly signalRService: SignalRService) {}
+
+  ngOnInit(): void {
+    this.signalRService.connect();
+    this.signalRService.registerMessageReceived((message: any) => {
+      this.messages.push(message);
+    });
+  }
+
+  sendMessage(chatId: string, message: string): void {
+    this.signalRService.sendMessage(message, chatId);
+  }
+
+  ngOnDestroy(): void {
+    this.signalRService.disconnect();
+  }
 }

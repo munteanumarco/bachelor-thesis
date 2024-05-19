@@ -11,12 +11,14 @@ import { BaseResponse } from '../interfaces/BaseResponse';
 import { UserRoutes } from '../constants/user-routes';
 import { ResetPasswordRequest } from '../interfaces/auth/ResetPasswordRequest';
 import { LoginGoogleCredentials } from '../interfaces/auth/LoginGoogleCredentials';
+import { ApiGatewayServices } from '../constants/api-gateway-services';
+import { convertToObject } from 'typescript';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  private baseUrl = `${environment.baseUrl}/${UserRoutes.BASE}`;
+  private baseUrl = `${environment.apiGateway}/${ApiGatewayServices.ENGINE}/${UserRoutes.BASE}`;
 
   constructor(private http: HttpClient) {}
 
@@ -28,6 +30,7 @@ export class AuthService {
       userIdentifier,
       password,
     };
+    console.log(`${this.baseUrl}/${UserRoutes.LOGIN}`);
     return this.http.post<LoginResponse>(
       `${this.baseUrl}/${UserRoutes.LOGIN}`,
       user

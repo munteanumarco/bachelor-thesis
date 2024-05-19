@@ -1,5 +1,5 @@
 export enum EmergencyEventsRoutes {
-  BASE = 'emergency-events',
+  BASE = 'api/emergency-events',
   MARKERS = 'markers',
   PARTICIPANTS = 'participants',
 }

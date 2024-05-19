@@ -1,5 +1,5 @@
 export enum UserRoutes {
-  BASE = 'users',
+  BASE = 'api/users',
   LOGIN = 'login',
   GOOGLE_LOGIN = 'google-login',
   REGISTER = 'register',
