@@ -46,9 +46,8 @@ public class ChatRepository : IChatRepository
         return "Chat message saved";
     }
     
-    public async Task<PagedResult<Message>> GetChatMessagesAsync(Guid chatId, int pageNumber, int pageSize)
+    public async Task<IEnumerable<Message>> GetChatMessagesAsync(Guid chatId)
     {
-        int skip = (pageNumber - 1) * pageSize;
         var query = _context.ChatEvents
             .Where(chatEvent => chatEvent.Id == chatId)
             .Include(chatEvent => chatEvent.ChatMessages)
@@ -58,12 +57,7 @@ public class ChatRepository : IChatRepository
             .Select(chatMessage => chatMessage.Message)
             .OrderBy(message => message.Date);
 
-        var totalCount = await query.CountAsync();
-        var messages = await query.Skip(skip)
-            .Take(pageSize)
-            .ToListAsync();
-        
-        return new PagedResult<Message>(messages, totalCount, pageNumber, pageSize);
+        return await query.ToListAsync();
     }
     
     public async Task AddChatEventAsync(Guid emergencyEventId, string name)
@@ -75,5 +69,19 @@ public class ChatRepository : IChatRepository
         };
         await _context.ChatEvents.AddAsync(chatEvent);
         await _context.SaveChangesAsync();
+    }
+
+    public async Task<ChatEvent?> GetChatDetailsAsync(Guid eventId)
+    {
+        return await _context.ChatEvents
+            .Where(chatEvent => chatEvent.EmergencyEventId == eventId)
+            .FirstOrDefaultAsync();
+    }
+
+    public async Task<int> GetParticipantCountAsync(Guid eventId)
+    {
+        return await _context.Participants
+            .Where(participant => participant.EmergencyEventId == eventId)
+            .CountAsync();
     }
 }

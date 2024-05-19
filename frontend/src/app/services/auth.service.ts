@@ -30,7 +30,6 @@ export class AuthService {
       userIdentifier,
       password,
     };
-    console.log(`${this.baseUrl}/${UserRoutes.LOGIN}`);
     return this.http.post<LoginResponse>(
       `${this.baseUrl}/${UserRoutes.LOGIN}`,
       user

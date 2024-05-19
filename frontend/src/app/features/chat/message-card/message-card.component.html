@@ -1,22 +1,17 @@
 <div
   class="flex"
-  [class.justify-end]="message.user.name === currentUser"
-  [class.justify-start]="message.user.name !== currentUser"
+  [class.justify-end]="message.username === currentUser"
+  [class.justify-start]="message.username !== currentUser"
 >
   <div
     class="flex p-2 gap-2 rounded-md max-w-xs lg:max-w-md"
-    [class.bg-black]="message.user.name === currentUser"
-    [class.bg-gray-300]="message.user.name !== currentUser"
-    [class.text-white]="message.user.name === currentUser"
-    [class.text-black]="message.user.name !== currentUser"
+    [class.bg-black]="message.username === currentUser"
+    [class.bg-gray-300]="message.username !== currentUser"
+    [class.text-white]="message.username === currentUser"
+    [class.text-black]="message.username !== currentUser"
   >
-    <img
-      [src]="message.user.avatar"
-      alt="User Avatar"
-      class="w-10 h-10 rounded-full"
-    />
     <div>
-      <div class="font-semibold">{{ message.user.name }}</div>
+      <div class="font-semibold">{{ message.username }}</div>
       <div>{{ message.text }}</div>
       <div class="text-xs text-gray-500">{{ formattedDate(message.date) }}</div>
     </div>

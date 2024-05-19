@@ -1,3 +1,4 @@
+using BusinessLayer.DTOs;
 using BusinessLayer.Helpers;
 using BusinessLayer.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -7,7 +8,7 @@ using ILogger = Serilog.ILogger;
 
 namespace API.Hubs;
 
-// [Authorize]
+[Authorize]
 public class ChatHub : Hub
 {
     private readonly IChatService _chatService;
@@ -22,8 +23,16 @@ public class ChatHub : Hub
     {
         var userId = Context.User?.FindFirst(CustomClaimTypes.UserId)?.Value;
         _logger.Information($"Sending message to chat with id {chatId} from user with id {userId}");
-        var savedMessage = await _chatService.SaveMessageAsync(new Guid(chatId), userId, message);    
-        return Clients.Group(chatId.ToUpper()).SendAsync("ReceiveMessage", savedMessage);
+        var result = await _chatService.SaveMessageAsync(new Guid(chatId), userId, message);
+        var messageDto = new EnhancedMessageDto()
+        {
+            Id = result.Data.Id,
+            Text = result.Data.MessageText,
+            Date = result.Data.Date,
+            Username = result.Data.Username
+        };
+        
+        return Clients.Group(chatId.ToUpper()).SendAsync("ReceiveMessage", messageDto);
     }
     public override async Task OnConnectedAsync()
     {

@@ -13,8 +13,10 @@ public class CommunicationServiceContext : IdentityDbContext<EmergencyAppUser>
     
     public DbSet<Message> Messages { get; set; }
     public DbSet<ChatMessage> ChatMessages { get; set; }
-    public DbSet<ChatEvent> ChatEvents { get; set; }
+    public DbSet<ChatEvent?> ChatEvents { get; set; }
     public DbSet<Participant> Participants { get; set; }
+    
+    public DbSet<EmergencyEvent> EmergencyEvents { get; set; }
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

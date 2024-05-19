@@ -30,7 +30,7 @@ public class ChatService : IChatService
             {
                 MessageText = message,
                 UserId = userId,
-                Date = DateTime.Now,
+                Date = DateTime.UtcNow,
             };
 
             var messageToReturn = await _chatRepository.SaveMessageAsync(newMessage);
@@ -65,17 +65,39 @@ public class ChatService : IChatService
         }
     }
 
-    public async Task<OperationResult<PagedResult<MessageDto>>> GetChatMessagesAsync(Guid chatId, int pageNumber, int pageSize)
+    public async Task<OperationResult<IEnumerable<EnhancedMessageDto>>> GetChatMessagesAsync(Guid chatId)
     {
         try
         {
-            var messages = await _chatRepository.GetChatMessagesAsync(chatId, pageNumber, pageSize);
-            return OperationResult<PagedResult<MessageDto>>.Success(_mapper.Map<PagedResult<MessageDto>>(messages));
+            var messages = await _chatRepository.GetChatMessagesAsync(chatId);
+            return OperationResult<IEnumerable<EnhancedMessageDto>>.Success(_mapper.Map<IEnumerable<EnhancedMessageDto>>(messages));
         }
         catch (Exception e)
         {
             _logger.Error($"Error occurred while getting chat messages: {e.Message}");
-            return OperationResult<PagedResult<MessageDto>>.Failure(new List<string>(){"Error occurred while getting chat messages."});
+            return OperationResult<IEnumerable<EnhancedMessageDto>>.Failure(new List<string>(){"Error occurred while getting chat messages."});
+        }
+    }
+
+    public async Task<OperationResult<ChatDetailsDto>> GetChatDetailsAsync(Guid eventId)
+    {
+        try
+        {
+            var chatDetails = await _chatRepository.GetChatDetailsAsync(eventId);
+            if (chatDetails == null) return OperationResult<ChatDetailsDto>.Failure(new List<string>(){"Chat details not found."});
+            var participantsCount = await _chatRepository.GetParticipantCountAsync(eventId);
+            var chatDetailsDto = new ChatDetailsDto()
+            {
+                Id = chatDetails.Id,
+                Name = chatDetails.Name,
+                ParticipantsCount = participantsCount
+            };
+            return OperationResult<ChatDetailsDto>.Success(chatDetailsDto);
+        }
+        catch (Exception e)
+        {
+            _logger.Error($"Error occurred while getting chat messages: {e.Message}");
+            return OperationResult<ChatDetailsDto>.Failure(new List<string>(){"Error occurred while getting chat messages."});
         }
     }
 }

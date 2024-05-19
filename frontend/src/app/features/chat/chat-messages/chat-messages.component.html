@@ -1,4 +1,9 @@
-<div class="flex flex-col space-y-4 p-4 overflow-y-auto" style="height: 60vh">
+<div
+  class="flex flex-col space-y-4 p-4 overflow-y-auto"
+  style="height: 60vh"
+  #scrollMe
+  [scrollTop]="scrollMe.scrollHeight"
+>
   @for (message of messages; track message.id) {
   <app-message-card [message]="message" />
   }@empty {

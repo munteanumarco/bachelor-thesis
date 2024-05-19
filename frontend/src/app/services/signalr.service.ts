@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import * as signalR from '@microsoft/signalr';
 import { environment } from '../../environments/environment';
 import { StorageService } from './storage.service';
+import { ApiGatewayServices } from '../constants/api-gateway-services';
+import { CommunicationRoutes } from '../constants/communication-routes';
 
 @Injectable({
   providedIn: 'root',
@@ -11,9 +13,12 @@ export class SignalRService {
 
   constructor(private storageService: StorageService) {
     this.connection = new signalR.HubConnectionBuilder()
-      .withUrl(environment.chatUrl, {
-        accessTokenFactory: () => this.getJwtToken(),
-      })
+      .withUrl(
+        `${environment.apiGateway}/${ApiGatewayServices.COMMUNICATION}/${CommunicationRoutes.CHAT_HUB}`,
+        {
+          accessTokenFactory: () => this.getJwtToken(),
+        }
+      )
       .configureLogging(signalR.LogLevel.Information)
       .build();
   }

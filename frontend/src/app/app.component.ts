@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import { NavbarComponent } from './shared/navbar/navbar.component';
@@ -7,6 +7,7 @@ import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { FormsModule } from '@angular/forms';
 import { SpinnerComponent } from './shared/spinner/spinner.component';
+import { SignalRService } from './services/signalr.service';
 
 @Component({
   selector: 'app-root',
@@ -23,11 +24,14 @@ import { SpinnerComponent } from './shared/spinner/spinner.component';
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
-export class AppComponent {
+export class AppComponent implements OnInit, OnDestroy {
   title = 'Sky Sentinel';
   showNavbar = true;
 
-  constructor(private routeService: RouteService) {
+  constructor(
+    private routeService: RouteService,
+    private signalRService: SignalRService
+  ) {
     this.routeService.currentUrl$.subscribe((url) => {
       this.setNavbarVisibility(url);
     });
@@ -47,5 +51,13 @@ export class AppComponent {
     this.showNavbar = !NO_NAVBAR_PREFIXES.some((prefix) =>
       url.startsWith(prefix)
     );
+  }
+
+  ngOnInit(): void {
+    this.signalRService.connect();
+  }
+
+  ngOnDestroy(): void {
+    this.signalRService.disconnect();
   }
 }

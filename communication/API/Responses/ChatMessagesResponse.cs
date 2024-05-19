@@ -4,15 +4,15 @@ namespace API.Responses;
 
 public class ChatMessagesResponse : BaseResponse
 {
-    public IEnumerable<MessageDto> ChatMessages { get; set; }
+    public IEnumerable<EnhancedMessageDto> ChatMessages { get; set; }
 
-    private ChatMessagesResponse(bool isSuccess, IEnumerable<string> errorMessages, IEnumerable<MessageDto> chatMessages)
+    private ChatMessagesResponse(bool isSuccess, IEnumerable<string> errorMessages, IEnumerable<EnhancedMessageDto> chatMessages)
         : base(isSuccess, errorMessages)
     {
         ChatMessages = chatMessages;
     }
 
-    public static ChatMessagesResponse Success(IEnumerable<MessageDto> chatMessages)
+    public static ChatMessagesResponse Success(IEnumerable<EnhancedMessageDto> chatMessages)
     {
         return new ChatMessagesResponse(true, new List<string>(), chatMessages);
     }

@@ -1,12 +1,13 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
+import { ChatDetailsDto } from '../../../interfaces/chat/ChatDetailsDto';
 
 @Component({
   selector: 'app-chat-header',
   standalone: true,
   imports: [],
   templateUrl: './chat-header.component.html',
-  styleUrl: './chat-header.component.scss'
+  styleUrl: './chat-header.component.scss',
 })
 export class ChatHeaderComponent {
-
+  @Input() details!: ChatDetailsDto;
 }

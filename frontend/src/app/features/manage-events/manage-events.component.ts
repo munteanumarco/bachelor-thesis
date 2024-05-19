@@ -12,7 +12,7 @@ import { Table } from 'primeng/table';
 
 const mockEmergencyEvents: EmergencyEventDto[] = [
   {
-    id: '1',
+    id: '4047779c-80d2-48f3-a201-9e55393f78d0',
     description: 'Fire in the building',
     location: 'Building 1',
     latitude: 1.2345,

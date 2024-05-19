@@ -1,5 +1,6 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { Message } from '../../../interfaces/chat/message';
+import { StorageService } from '../../../services/storage.service';
 
 @Component({
   selector: 'app-message-card',
@@ -8,9 +9,14 @@ import { Message } from '../../../interfaces/chat/message';
   templateUrl: './message-card.component.html',
   styleUrl: './message-card.component.scss',
 })
-export class MessageCardComponent {
+export class MessageCardComponent implements OnInit {
   @Input() message!: Message;
-  currentUser = 'john2';
+  currentUser!: string;
+
+  constructor(private readonly storageService: StorageService) {}
+  ngOnInit(): void {
+    this.currentUser = this.storageService.getUsername() || '';
+  }
 
   formattedDate(date: Date): string {
     return new Intl.DateTimeFormat('en-US', {

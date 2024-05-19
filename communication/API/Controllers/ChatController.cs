@@ -19,10 +19,18 @@ public class ChatController : ControllerBase
     }
 
     [HttpGet("{chatId}/messages")]
-    public async Task<ActionResult<ChatMessagesResponse>> GetChatMessages(Guid chatId, int pageNumber = 1, int pageSize = 10)
+    public async Task<ActionResult<ChatMessagesResponse>> GetChatMessages(Guid chatId)
     {
-        var result = await _chatService.GetChatMessagesAsync(chatId, pageNumber, pageSize);
+        var result = await _chatService.GetChatMessagesAsync(chatId);
         if (!result.IsSuccess) return BadRequest(ChatMessagesResponse.Failure(result.Errors));
-        return Ok(ChatMessagesResponse.Success(result.Data.Data));
+        return Ok(ChatMessagesResponse.Success(result.Data));
+    }
+    
+    [HttpGet("{eventId}/details")]
+    public async Task<ActionResult<GetChatDetailsResponse>> GetChatDetails(Guid eventId)
+    {
+        var result = await _chatService.GetChatDetailsAsync(eventId);
+        if (!result.IsSuccess) return BadRequest(GetChatDetailsResponse.Failure(result.Errors));
+        return Ok(GetChatDetailsResponse.Success(result.Data));
     }
 }

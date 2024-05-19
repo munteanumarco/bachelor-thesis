@@ -29,7 +29,8 @@ public class ServiceConfiguration
                     builder.WithOrigins("http://localhost:4200")
                         .AllowAnyHeader()
                         .AllowAnyMethod()
-                        .AllowCredentials();
+                        .AllowCredentials()
+                        .WithExposedHeaders("x-signalr-user-agent");
                 });
         });
         
@@ -108,6 +109,21 @@ public class ServiceConfiguration
                 ValidIssuer = jwtSettings.JwtIssuer,
                 ValidAudience = jwtSettings.JwtAudience,
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.JwtKey))
+            };
+            
+            options.Events = new JwtBearerEvents
+            {
+                OnMessageReceived = context =>
+                {
+                    var accessToken = context.Request.Query["access_token"];
+                    var path = context.HttpContext.Request.Path;
+                    if (!string.IsNullOrEmpty(accessToken) &&
+                        path.StartsWithSegments("/chat-hub")) // Adjust the path as per your application's URL
+                    {
+                        context.Token = accessToken;
+                    }
+                    return Task.CompletedTask;
+                }
             };
         });
 

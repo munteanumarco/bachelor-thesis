@@ -9,5 +9,6 @@ public interface IChatService
 {
     Task<OperationResult<MessageDto>> SaveMessageAsync(Guid chatId, string userId, string message);
     Task<OperationResult<IEnumerable<Guid>>> GetUserChatIds(string userId);
-    Task<OperationResult<PagedResult<MessageDto>>> GetChatMessagesAsync(Guid chatId, int pageNumber, int pageSize);
+    Task<OperationResult<IEnumerable<EnhancedMessageDto>>> GetChatMessagesAsync(Guid chatId);
+    Task<OperationResult<ChatDetailsDto>> GetChatDetailsAsync(Guid eventId);
 }

@@ -4,8 +4,13 @@
       type="text"
       class="flex-1 p-2 border rounded focus:border-blue-500 focus:outline-none"
       placeholder="Type a message..."
+      [(ngModel)]="message"
+      (keyup.enter)="sendMessage()"
     />
-    <button class="p-2 bg-black text-white rounded hover:bg-gray-600">
+    <button
+      class="p-2 bg-black text-white rounded hover:bg-gray-600"
+      (click)="sendMessage()"
+    >
       Send
     </button>
   </div>
