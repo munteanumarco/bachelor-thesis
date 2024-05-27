@@ -47,6 +47,7 @@ export class AppComponent implements OnInit, OnDestroy {
       '/reset-password',
       '/report-emergency',
       '/chat',
+      '/assistant',
     ];
     this.showNavbar = !NO_NAVBAR_PREFIXES.some((prefix) =>
       url.startsWith(prefix)

@@ -1,9 +1,21 @@
 const { createAssistant } = require("./src/createAssistant");
 const { createThread } = require("./src/createThread");
-const { createMessage, getMessageParamsTemplate } = require("./src/createMessage");
-const { getThreadMessages, getThreadMessagesParamsTemplate } = require("./src/getThreadMessages");
-const { deleteThread, getDeleteThreadParamsTemplate } = require("./src/deleteThread");
-const { deleteAssistant, getDeleteAssistantParamsTemplate } = require("./src/deleteAssistant");
+const {
+  createMessage,
+  getMessageParamsTemplate,
+} = require("./src/createMessage");
+const {
+  getThreadMessages,
+  getThreadMessagesParamsTemplate,
+} = require("./src/getThreadMessages");
+const {
+  deleteThread,
+  getDeleteThreadParamsTemplate,
+} = require("./src/deleteThread");
+const {
+  deleteAssistant,
+  getDeleteAssistantParamsTemplate,
+} = require("./src/deleteAssistant");
 const express = require("express");
 const config = require("dotenv").config();
 const app = express();
@@ -71,21 +83,25 @@ app.delete("/assistants/:assistantId", authenticateToken, async (req, res) => {
   }
 });
 
-app.post("/assistants/:assistantId/threads/:threadId", authenticateToken, async (req, res) => {
-  try {
-    const { assistantId, threadId } = req.params;
-    let params = getMessageParamsTemplate();
-    params.assistantId = assistantId;
-    params.threadId = threadId;
-    params.userQuestion = req.body.userQuestion;
+app.post(
+  "/assistants/:assistantId/threads/:threadId",
+  authenticateToken,
+  async (req, res) => {
+    try {
+      const { assistantId, threadId } = req.params;
+      let params = getMessageParamsTemplate();
+      params.assistantId = assistantId;
+      params.threadId = threadId;
+      params.userQuestion = req.body.userQuestion;
 
-    const messages = await createMessage(params);
+      const messages = await createMessage(params);
 
-    res.json(messages);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
+      res.json(messages);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
   }
-});
+);
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {

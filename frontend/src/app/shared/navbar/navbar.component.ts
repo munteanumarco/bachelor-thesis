@@ -35,6 +35,10 @@ export class NavbarComponent implements OnInit {
       label: 'Manage Events',
       routerLink: ['/manage-events'],
     },
+    {
+      label: 'Assistant',
+      routerLink: ['/assistant'],
+    },
   ];
 
   ngOnInit(): void {

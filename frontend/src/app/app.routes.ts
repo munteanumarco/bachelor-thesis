@@ -13,6 +13,7 @@ import { userGuard } from './guards/user.guard';
 import { EmergencyDetailsComponent } from './features/emergency-details/emergency-details.component';
 import { ManageEventsComponent } from './features/manage-events/manage-events.component';
 import { ChatComponent } from './features/chat/chat.component';
+import { AssistantComponent } from './features/assistant/assistant.component';
 
 export const routes: Routes = [
   {
@@ -82,6 +83,12 @@ export const routes: Routes = [
     path: 'chat',
     component: ChatComponent,
     title: 'Chat',
+    canActivate: [userGuard],
+  },
+  {
+    path: 'assistant',
+    component: AssistantComponent,
+    title: 'Assistant',
     canActivate: [userGuard],
   },
 ];

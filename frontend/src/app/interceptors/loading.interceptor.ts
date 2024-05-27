@@ -6,9 +6,12 @@ import { finalize } from 'rxjs';
 export const loadingInterceptor: HttpInterceptorFn = (req, next) => {
   const loaderService = inject(LoaderService);
   let totalRequests = 0;
+  const isSpecialRequest = req.url.includes('/assistants/');
 
-  totalRequests++;
-  loaderService.setLoading(true);
+  if (!isSpecialRequest) {
+    totalRequests++;
+    loaderService.setLoading(true);
+  }
 
   return next(req).pipe(
     finalize(() => {

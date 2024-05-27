@@ -15,8 +15,6 @@ import { ChatService } from '../../services/chat.service';
 import { ActivatedRoute } from '@angular/router';
 import { ChatDetailsDto } from '../../interfaces/chat/ChatDetailsDto';
 
-const mockMessages: Message[] = [];
-
 @Component({
   selector: 'app-chat',
   standalone: true,
@@ -25,8 +23,7 @@ const mockMessages: Message[] = [];
   styleUrl: './chat.component.scss',
 })
 export class ChatComponent implements OnInit, OnDestroy {
-  @ViewChild('messageContainer') private messageContainer!: ElementRef;
-  messages: Message[] = mockMessages;
+  messages!: Message[];
   eventId!: string;
   chatDetails!: ChatDetailsDto;
 

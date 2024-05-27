@@ -2,5 +2,7 @@
   class="bg-black text-white text-lg font-semibold p-4 rounded-t-lg flex justify-between items-center"
 >
   <span>{{ details.name }}</span>
+  @if(details.participantsCount > 0) {
   <span>Participants: {{ details.participantsCount }}</span>
+  }
 </div>

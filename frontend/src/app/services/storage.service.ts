@@ -32,6 +32,26 @@ export class StorageService {
     return localStorage.getItem(LocalStorageKeys.USER_TOKEN);
   }
 
+  public saveUserToken(token: string): void {
+    localStorage.setItem(LocalStorageKeys.USER_TOKEN, token);
+  }
+
+  public saveAssistantId(assistantId: string): void {
+    localStorage.setItem(LocalStorageKeys.ASSISTANT_ID, assistantId);
+  }
+
+  public getAssistantId(): string | null {
+    return localStorage.getItem(LocalStorageKeys.ASSISTANT_ID);
+  }
+
+  public saveThreadId(threadId: string): void {
+    localStorage.setItem(LocalStorageKeys.THREAD_ID, threadId);
+  }
+
+  public getThreadId(): string | null {
+    return localStorage.getItem(LocalStorageKeys.THREAD_ID);
+  }
+
   public getUsername(): string | null {
     const token = this.getUserToken();
     if (!token) return null;
