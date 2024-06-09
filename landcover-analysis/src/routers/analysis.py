@@ -9,8 +9,8 @@ router = APIRouter(
 def get_road_segmentation_service() -> RoadSegmentationService:
     return DependencyContainer().get_dependency(RoadSegmentationService)
 
-@router.get("/test")
-async def satellite_image(road_segmentation_service: RoadSegmentationService = Depends(get_road_segmentation_service)):
+@router.get("/start")
+async def start_analysis(road_segmentation_service: RoadSegmentationService = Depends(get_road_segmentation_service)):
     raw_image_path, proccessed_image_path = road_segmentation_service.segment_road("image.jpeg")
     return {"raw_image_path": raw_image_path, "proccessed_image_path": proccessed_image_path}
 

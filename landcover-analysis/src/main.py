@@ -13,8 +13,21 @@ import logging
 import uvicorn
 from routers import satellite
 from routers import analysis
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+
+origins = [
+    "http://localhost:4200",  # Adjust this if your Angular app is served on a different port or host
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,  # Allows all origins in the list
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows all methods
+    allow_headers=["*"],  # Allows all headers
+)
 
 def add_dependencies():
     dependency_container = DependencyContainer()

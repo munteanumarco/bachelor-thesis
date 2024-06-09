@@ -1,0 +1,44 @@
+<div class="flex flex-col items-center justify-center min-h-screen">
+  <h1 class="text-5xl font-bold mb-8">Start Satellite Analysis</h1>
+  <div class="mb-8">
+    <p>
+      Type:
+      <span class="font-bold">{{ getEmergencyTypeName(event.type) }}</span>
+    </p>
+    <p>
+      Location: <span class="font-bold">{{ event.location }}</span>
+    </p>
+    <p>
+      Coordinates:
+      <span class="font-bold">{{ event.latitude }}, {{ event.longitude }}</span>
+    </p>
+  </div>
+  <button
+    class="bg-black hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
+    (click)="startAnalysis()"
+  >
+    Start Analysis
+  </button>
+  <div class="mt-4">
+    <p class="text-lg">
+      <span class="font-bold">Analysis status:</span>
+      {{
+        analysisStatus === undefined
+          ? "Not started"
+          : getLandCoverAnalysisStatusName(analysisStatus)
+      }}
+    </p>
+  </div>
+  @if (analysisStatus === completedStatus) {
+  <div class="flex justify-center space-x-4 py-6">
+    <img
+      src="../../../assets/images/image.png"
+      alt="Original Satellite Image"
+    />
+    <img
+      src="../../../assets/images/predicted_20240609033923.png"
+      alt="Road Prediction Satellite Image"
+    />
+  </div>
+  }
+</div>

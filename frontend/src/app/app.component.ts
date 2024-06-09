@@ -24,7 +24,7 @@ import { SignalRService } from './services/signalr.service';
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
-export class AppComponent implements OnInit, OnDestroy {
+export class AppComponent {
   title = 'Sky Sentinel';
   showNavbar = true;
 
@@ -48,17 +48,10 @@ export class AppComponent implements OnInit, OnDestroy {
       '/report-emergency',
       '/chat',
       '/assistant',
+      '/analysis',
     ];
     this.showNavbar = !NO_NAVBAR_PREFIXES.some((prefix) =>
       url.startsWith(prefix)
     );
-  }
-
-  ngOnInit(): void {
-    this.signalRService.connect();
-  }
-
-  ngOnDestroy(): void {
-    this.signalRService.disconnect();
   }
 }

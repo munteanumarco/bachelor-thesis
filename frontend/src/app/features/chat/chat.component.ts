@@ -34,6 +34,8 @@ export class ChatComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    this.signalRService.connect();
+
     this.route.queryParams.subscribe((params) => {
       this.eventId = params['eventId'];
     });
@@ -64,5 +66,6 @@ export class ChatComponent implements OnInit, OnDestroy {
     this.signalRService.unregisterMessageReceived(
       this.onMessageReceived.bind(this)
     );
+    this.signalRService.disconnect();
   }
 }

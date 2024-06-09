@@ -70,6 +70,14 @@ export class AssistantComponent implements OnInit {
   }
 
   handleSendMessage(message: string) {
+    const current_message: EnhancedMessage = {
+      created_at: Date.now() / 1000,
+      id: '1',
+      text: message,
+      date: new Date(Date.now()),
+      username: this.storageService.getUsername() || '',
+    };
+    this.messages.push(current_message);
     this.isLoading = true;
     this.assistantService.createMessage(message).subscribe((response) => {
       this.messages = [];

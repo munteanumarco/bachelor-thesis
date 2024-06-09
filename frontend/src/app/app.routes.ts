@@ -14,6 +14,7 @@ import { EmergencyDetailsComponent } from './features/emergency-details/emergenc
 import { ManageEventsComponent } from './features/manage-events/manage-events.component';
 import { ChatComponent } from './features/chat/chat.component';
 import { AssistantComponent } from './features/assistant/assistant.component';
+import { AnalysisComponent } from './features/analysis/analysis.component';
 
 export const routes: Routes = [
   {
@@ -89,6 +90,12 @@ export const routes: Routes = [
     path: 'assistant',
     component: AssistantComponent,
     title: 'Assistant',
+    canActivate: [userGuard],
+  },
+  {
+    path: 'analysis',
+    component: AnalysisComponent,
+    title: 'Analysis',
     canActivate: [userGuard],
   },
 ];
