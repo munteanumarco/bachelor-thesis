@@ -1,3 +1,4 @@
+using BusinessLayer.Helpers;
 using BusinessLayer.Interfaces;
 using BusinessLayer.RabbitMQ.EventContracts;
 using DataAccessLayer.Interfaces;
@@ -37,13 +38,22 @@ public class EmergencyReportedEventConsumer : IConsumer<EmergencyReportedEvent>
                                 $" UpdatedAt: {context.Message.UpdatedAt}");
             
            await _chatRepository.AddChatEventAsync(context.Message.Id, $"Emergency at {context.Message.Location}");
-           
-           //TODO: Send email to relevant users about the emergency
+
+           var administrators = await _chatRepository.GetAdministratorsAsync();
+
+           foreach (var admin in administrators)
+           {
+               await _mailSendingService.SendEmailAsync(MailRequest.EmergencyReported(admin.User.Email, context));
+           }
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex);
+            _logger.Error(ex,$"Error while consuming EmergencyReportedEventConsumer: {ex.Message}");
             throw;
         }
     }
 }
+
+
+
+

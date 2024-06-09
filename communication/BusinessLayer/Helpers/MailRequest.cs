@@ -1,4 +1,6 @@
 using System.Text;
+using BusinessLayer.RabbitMQ.EventContracts;
+using MassTransit;
 
 namespace BusinessLayer.Helpers;
 
@@ -47,5 +49,33 @@ public class MailRequest
         mailBody.AppendLine("<p>The Sky Sentinel Team</p>");
 
         return new MailRequest(toEmail, "Account Confirmation Request", mailBody.ToString());
+    }
+
+    public static MailRequest EmergencyReported(string toEmail, ConsumeContext<EmergencyReportedEvent> context)
+    {
+        
+        StringBuilder mailBody = new StringBuilder();
+        mailBody.AppendLine("<h1>New Emergency Reported</h1>");
+        mailBody.AppendLine("<p>Dear Team,</p>");
+        mailBody.AppendLine("<p>A new emergency event has been reported with the following details:</p>");
+        mailBody.AppendLine("<ul>");
+        mailBody.AppendLine("<li><strong>ID:</strong> " + context.Message.Id + "</li>");
+        mailBody.AppendLine("<li><strong>Location:</strong> " + context.Message.Location + "</li>");
+        mailBody.AppendLine("<li><strong>Description:</strong> " + context.Message.Description + "</li>");
+        mailBody.AppendLine("<li><strong>Latitude:</strong> " + context.Message.Latitude + "</li>");
+        mailBody.AppendLine("<li><strong>Longitude:</strong> " + context.Message.Longitude + "</li>");
+        mailBody.AppendLine("<li><strong>Type:</strong> " + context.Message.Type + "</li>");
+        mailBody.AppendLine("<li><strong>Severity:</strong> " + context.Message.Severity + "</li>");
+        mailBody.AppendLine("<li><strong>Status:</strong> " + context.Message.Status + "</li>");
+        mailBody.AppendLine("<li><strong>Reported By:</strong> " + context.Message.ReportedBy + "</li>");
+        mailBody.AppendLine("<li><strong>Reported By Username:</strong> " + context.Message.ReportedByUsername + "</li>");
+        mailBody.AppendLine("<li><strong>Reported At:</strong> " + context.Message.ReportedAt + "</li>");
+        mailBody.AppendLine("<li><strong>Updated At:</strong> " + context.Message.UpdatedAt + "</li>");
+        mailBody.AppendLine("</ul>");
+        mailBody.AppendLine("<p>Please take the necessary actions.</p>");
+        mailBody.AppendLine("<p>Thanks,</p>");
+        mailBody.AppendLine("<p>The Sky Sentinel Team</p>");
+
+        return new MailRequest(toEmail, "New Emergency Reported", mailBody.ToString());
     }
 }

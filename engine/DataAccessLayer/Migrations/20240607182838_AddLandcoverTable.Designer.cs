@@ -3,6 +3,7 @@ using System;
 using DataAccessLayer.DbContexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DataAccessLayer.Migrations
 {
     [DbContext(typeof(EngineServiceContext))]
-    partial class EmergencyContextModelSnapshot : ModelSnapshot
+    [Migration("20240607182838_AddLandcoverTable")]
+    partial class AddLandcoverTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -143,12 +145,6 @@ namespace DataAccessLayer.Migrations
                     b.Property<Guid>("EmergencyEventId")
                         .HasColumnType("uuid");
 
-                    b.Property<string>("ProcessedImage")
-                        .HasColumnType("text");
-
-                    b.Property<string>("RawImage")
-                        .HasColumnType("text");
-
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
@@ -213,15 +209,15 @@ namespace DataAccessLayer.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "6424c79e-6ffc-4ffa-b7c1-4a7bae8d245d",
-                            ConcurrencyStamp = "7f881be9-3cf5-4194-81fc-da1f16c0fa32",
+                            Id = "0465ddeb-933a-4b9b-9963-3effc295d7a0",
+                            ConcurrencyStamp = "936fac98-2f97-4338-9475-a4c21fcea05e",
                             Name = "User",
                             NormalizedName = "USER"
                         },
                         new
                         {
-                            Id = "d9adf1fa-a724-4eae-b3e9-7ae4cbaf8fc7",
-                            ConcurrencyStamp = "0c0aa4a7-fbc4-4f59-9bfe-1e379abc0737",
+                            Id = "e3fde62c-90cd-4958-bb7e-404804120fbf",
+                            ConcurrencyStamp = "2bcf78ba-bc20-4af7-8d2c-d953c2f3e433",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         });

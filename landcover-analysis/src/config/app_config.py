@@ -7,3 +7,6 @@ class AppConfig:
     LOG_LEVEL = os.environ.get('LOG_LEVEL', 'info')
     SERVICE_ACCOUNT = os.environ.get('SERVICE_ACCOUNT')
     SERVICE_ACCOUNT_KEY = os.environ.get('SERVICE_ACCOUNT_KEY', 'credentials.json')
+    MODEL_PATH = os.environ.get('MODEL_PATH')
+    RAW_DATA_FOLDER_PATH = os.environ.get('RAW_DATA_FOLDER_PATH')
+    PROCESSED_DATA_FOLDER_PATH = os.environ.get('PROCESSED_DATA_FOLDER_PATH')

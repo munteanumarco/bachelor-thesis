@@ -84,4 +84,9 @@ public class ChatRepository : IChatRepository
             .Where(participant => participant.EmergencyEventId == eventId)
             .CountAsync();
     }
+
+    public Task<IEnumerable<Participant>> GetAdministratorsAsync()
+    {
+        throw new NotImplementedException();
+    }
 }

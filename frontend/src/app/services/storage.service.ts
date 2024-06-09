@@ -13,7 +13,7 @@ export class StorageService {
   constructor() {}
 
   public logout(): void {
-    localStorage.removeItem(LocalStorageKeys.USER_TOKEN);
+    localStorage.clear();
     this.isLoggedIn.next(false);
   }
 

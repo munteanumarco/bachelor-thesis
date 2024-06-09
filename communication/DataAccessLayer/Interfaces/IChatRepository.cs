@@ -1,5 +1,4 @@
 using DataAccessLayer.Entities;
-using DataAccessLayer.Helpers;
 
 namespace DataAccessLayer.Interfaces;
 
@@ -12,4 +11,5 @@ public interface IChatRepository
     Task AddChatEventAsync(Guid emergencyEventId, string name);
     Task<ChatEvent?> GetChatDetailsAsync(Guid eventId);
     Task<int> GetParticipantCountAsync(Guid eventId);
+    Task<IEnumerable<Participant>> GetAdministratorsAsync();
 }

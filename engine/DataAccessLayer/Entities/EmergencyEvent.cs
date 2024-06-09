@@ -18,4 +18,6 @@ public class EmergencyEvent
     public Guid? ReportedBy { get; set; }
     public DateTime ReportedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
+    
+    public LandCoverAnalysis? LandCoverAnalysis {get; set;}
 }
