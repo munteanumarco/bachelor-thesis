@@ -2,7 +2,7 @@ from dotenv import load_dotenv
 
 
 load_dotenv()
-from services.road_segmentation_model import RoadSegmentationModel
+from ai_model.road_segmentation_model import RoadSegmentationModel
 from utils.dependency_container import DependencyContainer
 from services.road_segmentation_service import RoadSegmentationService
 from services.gee_service import GEEService

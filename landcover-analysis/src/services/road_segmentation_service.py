@@ -1,5 +1,5 @@
 import logging
-from services.road_segmentation_model import RoadSegmentationModel
+from ai_model.road_segmentation_model import RoadSegmentationModel
 
 class RoadSegmentationService:
     def __init__(self, road_segmentation_model: RoadSegmentationModel):
@@ -7,7 +7,6 @@ class RoadSegmentationService:
 
     def segment_road(self, image_path):
         try:
-            breakpoint()
             raw_image_path, proccessed_image_path = self.road_segmentation_model.predict(image_path)
             return raw_image_path, proccessed_image_path
         except Exception as e:

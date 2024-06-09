@@ -19,6 +19,10 @@ class RoadSegmentationModel:
         self.select_class_rgb_values =  np.array(self.class_rgb_values)[self.select_class_indices]
         self.raw_data_folder_path = raw_data_folder_path
         self.proccessed_data_folder_path = proccessed_data_folder_path
+        if not os.path.exists(self.raw_data_folder_path):
+            os.makedirs(self.raw_data_folder_path)
+        if not os.path.exists(self.proccessed_data_folder_path):
+            os.makedirs(self.proccessed_data_folder_path)
 
     def __load_model(self, model_path):
         chkpt = torch.load(model_path, map_location=self.device)
