@@ -94,5 +94,21 @@ services:
       - "15672:15672"
       - "5672:5672"
 
+  assistant:
+    build:
+      context: assistant
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+    environment:
+      NODE_ENV: production
+
+  landcover-analysis:
+    build:
+      context: landcover-analysis
+      dockerfile: Dockerfile
+    ports:
+      - "13500:13500"
+
 volumes:
   pgdata:
