@@ -11,6 +11,7 @@ import { getStatusName } from '../../interfaces/emergency/Status';
 import { RouterModule } from '@angular/router';
 import { formatDate } from '../../utils/date_formatter';
 import { signalUpdateFn } from '@angular/core/primitives/signals';
+import { MarkerService } from '../../services/marker-service.service';
 
 @Component({
   selector: 'app-emergency-map',
@@ -25,31 +26,39 @@ export class EmergencyMapComponent implements OnInit, AfterViewInit {
   constructor(
     private readonly geolocationService: GeolocationService,
     private readonly loaderService: LoaderService,
-    private readonly emergencyEventService: EmergencyEventService
+    private readonly emergencyEventService: EmergencyEventService,
+    private markerService: MarkerService
   ) {}
 
   ngOnInit(): void {
+    console.log("this is hit");
     this.loaderService.setManualLoading(true);
-    this.emergencyEventService.getEmergencyEvents().subscribe((result) => {
-      result.markers.forEach((event) => {
-        const marker = L.marker([event.latitude, event.longitude], {
-          icon: getIconForSeverity(event.severity),
-        });
+    this.emergencyEventService
+      .getEmergencyEventsMarkers()
+      .subscribe((result) => {
+        result.markers.forEach((event) => {
+          const marker = L.marker([event.latitude, event.longitude], {
+            icon: getIconForSeverity(event.severity),
+          });
 
-        const popupHtml = this.createPopupContent(
-          getEmergencyTypeName(event.type),
-          getSeverityName(event.severity),
-          getStatusName(event.status),
-          'emergency-details?eventId=' + event.id,
-          formatDate(new Date(event.updatedAt))
-        );
-        marker.bindPopup(popupHtml);
-        this.markers.push(marker);
+          const popupHtml = this.createPopupContent(
+            getEmergencyTypeName(event.type),
+            getSeverityName(event.severity),
+            getStatusName(event.status),
+            'emergency-details?eventId=' + event.id,
+            formatDate(new Date(event.updatedAt))
+          );
+          marker.bindPopup(popupHtml);
+          this.markers.push(marker);
+        });
+        this.loadMarkers();
+        this.markers.forEach((marker) => marker.addTo(this.map));
       });
-    });
   }
 
   private initMap(location: GeolocationPosition): void {
+
+    if (!this.map){
     this.map = L.map('map', {
       center: [location.coords.latitude, location.coords.longitude],
       zoom: 10,
@@ -65,7 +74,7 @@ export class EmergencyMapComponent implements OnInit, AfterViewInit {
     );
 
     tiles.addTo(this.map);
-    this.markers.forEach((marker) => marker.addTo(this.map));
+    this.markers.forEach((marker) => marker.addTo(this.map));}
   }
 
   private createPopupContent(
@@ -88,14 +97,18 @@ export class EmergencyMapComponent implements OnInit, AfterViewInit {
     `;
   }
 
+  loadMarkers() {
+    retryOperation(this.geolocationService.getCurrentLocation, 5, 1) 
+        .then((location: GeolocationPosition) => {
+          this.initMap(location);
+          this.loaderService.setManualLoading(false);
+        })
+        .catch(() => {
+          console.error('Getting location failed, retrying ...');
+        });
+  }
+
   ngAfterViewInit(): void {
-    retryOperation(this.geolocationService.getCurrentLocation, 5, 1)
-      .then((location: GeolocationPosition) => {
-        this.initMap(location);
-        this.loaderService.setManualLoading(false);
-      })
-      .catch(() => {
-        console.error('Getting location failed, retrying ...');
-      });
+    this.loadMarkers();
   }
 }

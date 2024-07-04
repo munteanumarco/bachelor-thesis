@@ -1,5 +1,6 @@
 using AutoMapper;
 using BusinessLayer.DTOs;
+using BusinessLayer.DTOs.Analysis;
 using BusinessLayer.DTOs.EmergencyEvent;
 using BusinessLayer.Helpers;
 using BusinessLayer.Interfaces;
@@ -59,6 +60,14 @@ public class EmergencyEventService : IEmergencyEventService
         return OperationResult<PagedResultDto<EmergencyEventDto>>.Success(_mapper.Map<PagedResultDto<EmergencyEventDto>>(paginatedResult));
     }
     
+    public async Task<OperationResult<IEnumerable<EmergencyEventDto>>> GetParticipatedEventsAsync(string userId)
+    {
+        var eventIds = await _emergencyEventRepository.GetParticipatedEventIdsAsync(userId);
+        var events = await _emergencyEventRepository.GetEmergencyEventsForIds(eventIds);
+        return OperationResult<IEnumerable<EmergencyEventDto>>.Success(
+            _mapper.Map<IEnumerable<EmergencyEventDto>>(events));
+    }
+    
     public async Task<OperationResult<IEnumerable<EmergencyEventMarkerDto>>> GetEmergencyEventMarkersAsync()
     {
         var emergencyEvents = await _emergencyEventRepository.GetEmergencyEventMarkersAsync();
@@ -72,6 +81,30 @@ public class EmergencyEventService : IEmergencyEventService
         var result = await _emergencyEventRepository.AddParticipantAsync(emergencyEventId, userId);
         if (!result) return OperationResult<bool>.Failure(new List<string>(){"Failed to add participant."});
         return OperationResult<bool>.Success(true);
+    }
+    
+    public async Task<OperationResult<IEnumerable<string>>> GetParticipantUsernamesAsync(Guid emergencyEventId)
+    {
+        var usernames = await _emergencyEventRepository.GetParticipantUsernamesAsync(emergencyEventId);
+        return OperationResult<IEnumerable<string>>.Success(usernames);
+    }
+    
+    public async Task<OperationResult<string>> GetAuthorUsernameAsync(string userId)
+    {
+        var username = await _emergencyEventRepository.GetAuthorUsernameAsync(userId);
+        if (username == null) return OperationResult<string>.Failure(new List<string>(){"User not found."});
+        return OperationResult<string>.Success(username);
+    }
+
+    public async Task<OperationResult<bool>> CreateEmptyAnalysisAsync(Guid emergencyEventId)
+    {
+       var analysisDto = new LandCoverAnalysisDto(){
+           EmergencyEventId = emergencyEventId,
+           Status = LandCoverAnalysisStatus.NotTriggered
+       };
+       var result = await _emergencyEventRepository.CreateLandCoverAnalysisAsync(_mapper.Map<LandCoverAnalysis>(analysisDto));
+       if (!result) return OperationResult<bool>.Failure(new List<string>(){"Failed to create analysis."});
+       return OperationResult<bool>.Success(result);
     }
 
     public async Task PublishEmergencyReportedAsync(EmergencyEventDto emergencyEventDto, string? username)

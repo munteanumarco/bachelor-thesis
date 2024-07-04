@@ -48,7 +48,7 @@
       <h2 class="text-xl text-black font-bold">Timestamps</h2>
       <p class="text-gray-600">
         <span class="font-semibold">Reported By:</span>
-        {{ event.reportedBy ? event.reportedBy : "Anonymous" }}
+        {{ event.reportedBy ? event.reportedByUsername : "Anonymous" }}
       </p>
       <p class="text-gray-600">
         <span class="font-semibold">Reported At:</span>
@@ -60,18 +60,20 @@
       </p>
     </div>
     <div class="mb-4">
-      <h2 class="text-xl text-black font-bold">Volunteers Count: 0</h2>
-      <!-- <p class="text-gray-600">
-        <span class="font-semibold">marco04</span>
-      </p>
+      <h2 class="text-xl text-black font-bold">
+        Volunteers Count: {{ event.participantsCount }}
+      </h2>
+      @for(username of event.participantsUsernames; track username){
       <p class="text-gray-600">
-        <span class="font-semibold">johnrock</span>
-      </p> -->
+        <span class="font-semibold">{{ username }}</span>
+      </p>
+      }
     </div>
     <div class="flex justify-center">
       <button
         class="px-4 py-2 font-bold text-white bg-black rounded hover:bg-gray-900"
         (click)="addParticipant()"
+        [hidden]="isCurrentUserParticipant()"
       >
         Become a Volunteer
       </button>

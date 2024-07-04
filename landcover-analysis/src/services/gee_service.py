@@ -1,54 +1,59 @@
-import datetime
 import os
 import ee
 import logging
+import requests
+import numpy as np
 from config.app_config import AppConfig
+
 
 class GEEService:
     def __init__(self, app_config: AppConfig):
-        self.__initialize_earth_engine(app_config)
+        self.__app_config = app_config
+        self.__landsat = self.__initialize_earth_engine(app_config)
 
-    def fetch_satellite_image(self, latitude, longitude, date, scale=30):
-        """
-        Fetches satellite image for given coordinates and date.
-        :param latitude: float, Latitude of the location
-        :param longitude: float, Longitude of the location
-        :param date: str, Date in 'YYYY-MM-DD' format
-        :param scale: int, Scale in meters
-        :return: Image URL
-        """
-        try:
-            # Create a point with the given latitude and longitude
-            point = ee.Geometry.Point([longitude, latitude]).buffer(500)
-            # Filter the image collection for the given date
-            start_date, end_date = "2022-01-01", "2022-01-31"
-            print(start_date, end_date)
-            image = ee.ImageCollection('LANDSAT/LC09/C02/T1') \
-                    .filterDate(start_date, end_date) \
-                    .filterBounds(point) \
-                    .first() \
-                    .select('B4', 'B3', 'B2')  # Selects the RGB channels
-            # Get the URL of the image
-            url = image.getThumbUrl({'min': 0, 'max': 30000, 'region': point, 'format': 'png', 'scale': scale})
-            return url
-        except Exception as e:
-            logging.error(f"Error fetching satellite image: {e}")
-            return None
+    async def image_download(self, point, name):
+        image_res=30
+        n_pixels=1024
+
+        visParams={'min': 0, 'max': 3000, 'gamma': 1.4,  
+                'bands' : ['B4', 'B3', 'B2'], 'dimensions' : str(n_pixels)+"x"+str(n_pixels),
+                'format' : 'jpg'}
         
+        len=image_res*n_pixels
+        region= point.buffer(len/12).bounds().getInfo()['coordinates']
+        coords=np.array(region)
+        coords=[np.min(coords[:,:,0]), np.min(coords[:,:,1]), np.max(coords[:,:,0]), np.max(coords[:,:,1])]
+        rectangle=ee.Geometry.Rectangle(coords)
+        clipped_image= self.__landsat.mean().clip(rectangle)
+            
+        requests.get(clipped_image.getThumbUrl(visParams))
+        path=os.path.join(self.__app_config.RAW_DATA_FOLDER_PATH, name)
+        open(path, 'wb').write(requests.get(clipped_image.getThumbUrl(visParams)).content)
+    
     def __initialize_earth_engine(self, app_config: AppConfig):
         try:
-            service_account_key_path = os.path.join((os.path.abspath("src")), app_config.SERVICE_ACCOUNT_KEY)
-            credentials = ee.ServiceAccountCredentials(app_config.SERVICE_ACCOUNT, service_account_key_path)
+            service_account_key_path = os.path.join(
+                (os.path.abspath("src")), app_config.SERVICE_ACCOUNT_KEY)
+            credentials = ee.ServiceAccountCredentials(
+                app_config.SERVICE_ACCOUNT, service_account_key_path)
             ee.Initialize(credentials)
             logging.info('Earth Engine initialized')
+            startDate = '2020-01-01'
+            endDate = '2020-12-31'
+            
+            sentinel = ee.ImageCollection("COPERNICUS/S2_SR")
+
+            def mask_sentinel_sr(image):
+                cloudBitMask = ee.Number(2).pow(10).int()
+                cirrusBitMask = ee.Number(2).pow(11).int()
+                qa = image.select('QA60')
+                mask = qa.bitwiseAnd(cloudBitMask).eq(0).And(
+                    qa.bitwiseAnd(cirrusBitMask).eq(0))
+                return image.updateMask(mask).select(["B4", "B3", "B2"])
+
+            sentinel = sentinel.filterDate(startDate, endDate).map(mask_sentinel_sr)
+            return sentinel
         except ee.EEException as e:
             logging.error(f"Failed to initialize Google Earth Engine: {e}")
 
-    def __parse_date(self, date_str):
-        # Convert the date string to a datetime object
-        date = datetime.datetime.strptime(date_str, '%Y-%m-%d')
-        # Create a date range from one day before to one day after
-        start_date = date - datetime.timedelta(month=1)
-        end_date = date + datetime.timedelta(month=1)
-        return start_date.strftime('%Y-%m-%d'), end_date.strftime('%Y-%m-%d')
-
+        

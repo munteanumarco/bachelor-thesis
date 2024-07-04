@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { EmergencyEventsRoutes } from '../constants/emergency-events-routes';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { CreateEmergencyEventRequest } from '../interfaces/emergency/CreateEmergencyEventRequest';
 import { Observable } from 'rxjs';
 import { CreateEmergencyEventResponse } from '../interfaces/emergency/CreateEmergencyEventResponse';
@@ -11,6 +11,7 @@ import { EmergencyEventMarkersResponse } from '../interfaces/emergency/Emergency
 import { GetEmergencyEventResponse } from '../interfaces/emergency/GetEmergencyEventResponse';
 import { BaseResponse } from '../interfaces/BaseResponse';
 import { ApiGatewayServices } from '../constants/api-gateway-services';
+import { GetEmergencyDetailsResponse } from '../interfaces/emergency/GetEmergencyDetailsResponse';
 
 @Injectable({
   providedIn: 'root',
@@ -29,15 +30,40 @@ export class EmergencyEventService {
     );
   }
 
-  getEmergencyEvents(): Observable<EmergencyEventMarkersResponse> {
+  getEmergencyEventsMarkers(): Observable<EmergencyEventMarkersResponse> {
     return this.http.get<EmergencyEventMarkersResponse>(
       `${this.baseUrl}/${EmergencyEventsRoutes.MARKERS}`
     );
   }
 
-  getEmergencyEvent(eventId: string): Observable<GetEmergencyEventResponse> {
-    return this.http.get<GetEmergencyEventResponse>(
+  getEmergencyEventDetails(
+    eventId: string
+  ): Observable<GetEmergencyDetailsResponse> {
+    return this.http.get<GetEmergencyDetailsResponse>(
       `${this.baseUrl}/${eventId}`
+    );
+  }
+
+  getEmergencyEvents(
+    pageSize: number,
+    pageNumber: number,
+    userId?: string
+  ): Observable<PaginatedResponse<EmergencyEventDto>> {
+    let params = new HttpParams()
+      .set('pageSize', pageSize.toString())
+      .set('pageNumber', pageNumber.toString());
+    if (userId) {
+      params = params.set('userId', userId);
+    }
+    return this.http.get<PaginatedResponse<EmergencyEventDto>>(
+      `${this.baseUrl}`,
+      { params }
+    );
+  }
+
+  getParticipatedEvents() {
+    return this.http.get<EmergencyEventDto[]>(
+      `${this.baseUrl}/${EmergencyEventsRoutes.PARTICIPATED}`
     );
   }
 

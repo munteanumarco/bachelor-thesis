@@ -39,12 +39,12 @@ public class EmergencyReportedEventConsumer : IConsumer<EmergencyReportedEvent>
             
            await _chatRepository.AddChatEventAsync(context.Message.Id, $"Emergency at {context.Message.Location}");
 
-           var administrators = await _chatRepository.GetAdministratorsAsync();
-
-           foreach (var admin in administrators)
-           {
-               await _mailSendingService.SendEmailAsync(MailRequest.EmergencyReported(admin.User.Email, context));
-           }
+           // var administrators = await _chatRepository.GetAdministratorsAsync();
+           //
+           // foreach (var admin in administrators)
+           // {
+           //     await _mailSendingService.SendEmailAsync(MailRequest.EmergencyReported(admin.User.Email, context));
+           // }
         }
         catch (Exception ex)
         {

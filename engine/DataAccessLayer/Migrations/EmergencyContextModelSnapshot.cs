@@ -137,7 +137,7 @@ namespace DataAccessLayer.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<DateTime>("CompletedAt")
+                    b.Property<DateTime?>("CompletedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("EmergencyEventId")
@@ -152,7 +152,7 @@ namespace DataAccessLayer.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime>("TriggeredAt")
+                    b.Property<DateTime?>("TriggeredAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
@@ -213,15 +213,15 @@ namespace DataAccessLayer.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "6424c79e-6ffc-4ffa-b7c1-4a7bae8d245d",
-                            ConcurrencyStamp = "7f881be9-3cf5-4194-81fc-da1f16c0fa32",
+                            Id = "ead1e695-d535-4661-bfc6-aa6f5c556941",
+                            ConcurrencyStamp = "f03aa11d-cc51-4b54-aee9-5aafb6c863fd",
                             Name = "User",
                             NormalizedName = "USER"
                         },
                         new
                         {
-                            Id = "d9adf1fa-a724-4eae-b3e9-7ae4cbaf8fc7",
-                            ConcurrencyStamp = "0c0aa4a7-fbc4-4f59-9bfe-1e379abc0737",
+                            Id = "9c2b55d9-20dc-4f12-aa82-b00779adb7f6",
+                            ConcurrencyStamp = "420ec7c7-c6b3-416e-8596-e4893132f77c",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         });

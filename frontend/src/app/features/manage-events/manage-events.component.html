@@ -7,40 +7,27 @@
     [rowsPerPageOptions]="[10, 25, 50]"
     [loading]="loading"
     [paginator]="true"
-    [globalFilterFields]="[
-      'name',
-      'country.name',
-      'representative.name',
-      'status'
-    ]"
+    [showCurrentPageReport]="true"
   >
     <ng-template pTemplate="header">
       <tr>
-        <th style="min-width: 15rem">
+        <th class="header-bg-color" style="min-width: 15rem">
           <div class="flex align-items-center">
             <p>Type</p>
-            <p-columnFilter type="text" field="type" display="menu" />
           </div>
         </th>
-        <th style="min-width: 15rem">
-          <div class="flex align-items-center">
-            Status
-            <p-columnFilter type="text" field="country.name" display="menu" />
-          </div>
+        <th class="header-bg-color" style="min-width: 15rem">
+          <div class="flex align-items-center">Status</div>
         </th>
-        <th style="min-width: 15rem">
-          <div class="flex align-items-center">
-            Location
-            <p-columnFilter type="text" field="text" display="menu" />
-          </div>
+        <th class="header-bg-color" style="min-width: 15rem">
+          <div class="flex align-items-center">Location</div>
         </th>
-        <th style="min-width: 15rem">
+        <th class="header-bg-color" style="min-width: 15rem">
           <div class="flex justify-left">
             <p>Severity</p>
-            <p-columnFilter type="text" field="country.name" display="menu" />
           </div>
         </th>
-        <th style="min-width: 15rem">
+        <th class="header-bg-color" style="min-width: 15rem">
           <div class="flex align-items-center">Actions</div>
         </th>
       </tr>
@@ -92,12 +79,12 @@
             >
               Analysis
             </button>
-            <button
+            <!-- <button
               type="submit"
               class="flex justify-center rounded-md bg-green-500 text-black px-3 py-1.5 text-sm font-semibold leading-6 shadow-sm hover:bg-green-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600 disabled:bg-opacity-30 disabled:cursor-not-allowed"
             >
               Resolve
-            </button>
+            </button> -->
           </div>
         </td>
       </tr>

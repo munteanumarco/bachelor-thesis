@@ -1,3 +1,4 @@
+@if(event && analysis){
 <div class="flex flex-col items-center justify-center min-h-screen">
   <h1 class="text-5xl font-bold mb-8">Start Satellite Analysis</h1>
   <div class="mb-8">
@@ -16,29 +17,22 @@
   <button
     class="bg-black hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
     (click)="startAnalysis()"
+    [hidden]="analysis.Status !== notTriggered"
+
   >
     Start Analysis
   </button>
   <div class="mt-4">
     <p class="text-lg">
       <span class="font-bold">Analysis status:</span>
-      {{
-        analysisStatus === undefined
-          ? "Not started"
-          : getLandCoverAnalysisStatusName(analysisStatus)
-      }}
+      {{ getLandCoverAnalysisStatusName(analysis.Status) }}
     </p>
   </div>
-  @if (analysisStatus === completedStatus) {
-  <div class="flex justify-center space-x-4 py-6">
-    <img
-      src="../../../assets/images/image.png"
-      alt="Original Satellite Image"
-    />
-    <img
-      src="../../../assets/images/predicted_20240609033923.png"
-      alt="Road Prediction Satellite Image"
-    />
+  @if (analysis.Status === completedStatus) {
+    <div class="flex justify-center space-x-4 py-6">
+      <img class="w-full max-w-md px-2" src="{{ analysis.RawImage }}" alt="Original Satellite Image" style="object-fit: contain;" />
+      <img class="w-full max-w-md px-2" src="{{ analysis.ProcessedImage }}" alt="Road Prediction Satellite Image" style="object-fit: contain;" />
   </div>
   }
 </div>
+}

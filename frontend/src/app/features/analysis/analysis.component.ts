@@ -1,12 +1,15 @@
 import { Component, OnInit } from '@angular/core';
-import { EmergencyEventDto } from '../../interfaces/emergency/EmergencyEventDto';
 import { EmergencyType } from '../../interfaces/emergency/EmergencyType';
-import { Severity } from '../../interfaces/emergency/Severity';
-import { Status } from '../../interfaces/emergency/Status';
 import { getEmergencyTypeName } from '../../interfaces/emergency/EmergencyType';
 import { AnalysisService } from '../../services/analysis.service';
 import { LandCoverAnalysisStatus } from '../../interfaces/analysis/LandcoverAnalysisStatus';
 import { getLandCoverAnalysisStatusName } from '../../interfaces/analysis/LandcoverAnalysisStatus';
+import { EmergencyDetailsDto } from '../../interfaces/emergency/EmergencyDetailsDto';
+import { EmergencyEventService } from '../../services/emergency-event.service';
+import { ActivatedRoute } from '@angular/router';
+import { LandCoverAnalysisDto } from '../../interfaces/analysis/LandcoverAnalysisDto';
+import { forkJoin } from 'rxjs';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-analysis',
@@ -16,28 +19,24 @@ import { getLandCoverAnalysisStatusName } from '../../interfaces/analysis/Landco
   styleUrl: './analysis.component.scss',
 })
 export class AnalysisComponent implements OnInit {
-  event: EmergencyEventDto = {
-    id: '4',
-    description: 'Fire in a building',
-    location: 'Zimbrului Street, Iasi, Romania',
-    latitude: 47.1584549,
-    longitude: 27.6014418,
-    severity: Severity.CRITICAL,
-    status: Status.NEW,
-    type: EmergencyType.FIRE,
-    reportedAt: new Date(),
-    updatedAt: new Date(),
-    reportedBy: 'John Doe',
-  };
-  analysisStatus: LandCoverAnalysisStatus | undefined;
+  event!: EmergencyDetailsDto;
+  analysis!: LandCoverAnalysisDto;
   completedStatus = LandCoverAnalysisStatus.Completed;
+  notTriggered = LandCoverAnalysisStatus.NotTriggered;
 
-  constructor(private analysisService: AnalysisService) {}
+  constructor(
+    private analysisService: AnalysisService,
+    private emergencyEventService: EmergencyEventService,
+    private route: ActivatedRoute,
+    private messageService: MessageService
+  ) {}
 
   ngOnInit(): void {
-    this.analysisService
-      .getUp()
-      .subscribe(() => console.log('Analysis service is up'));
+    this.route.queryParams.subscribe((params) => {
+      const eventId = params['eventId'];
+      this.fetchAnalysisDetails(eventId);
+      this.fetchEventDetails(eventId);
+    });
   }
 
   getEmergencyTypeName(type: EmergencyType): string {
@@ -45,13 +44,54 @@ export class AnalysisComponent implements OnInit {
   }
 
   getLandCoverAnalysisStatusName(status: LandCoverAnalysisStatus): string {
+    console.log('status inside function:', status);
+    if (!status) return '';
     return getLandCoverAnalysisStatusName(status);
   }
 
-  startAnalysis() {
-    this.analysisStatus = LandCoverAnalysisStatus.InProgress;
-    setTimeout(() => {
-      this.analysisStatus = LandCoverAnalysisStatus.Completed;
-    }, 10000);
+  fetchEventDetails(eventId: string): void {
+    this.emergencyEventService
+      .getEmergencyEventDetails(eventId)
+      .subscribe((response) => {
+        this.event = response.details;
+      });
+  }
+
+  fetchAnalysisDetails(eventId: string): void {
+    this.analysisService.getAnalysis(eventId).subscribe((response) => {
+      this.analysis = response;
+    });
+  }
+
+  startAnalysis(): void {
+    this.analysisService
+      .startAnalysis(this.event.id, this.event.latitude, this.event.longitude)
+      .subscribe({
+        next: (response) => {
+          this.showSuccess(response.message);
+          this.fetchAnalysisDetails(this.event.id);
+        },
+        error: (error) => {
+          this.showErrorMessage(error);
+        },
+      });
+  }
+
+  showSuccess(message: string): void {
+    this.messageService.add({
+      key: 'bc',
+      severity: 'success',
+      summary: 'Success',
+      detail: message,
+    });
+  }
+
+  showErrorMessage(error: string): void {
+    this.messageService.add({
+      key: 'bc',
+      severity: 'error',
+      summary: 'Login Failed',
+      detail: error,
+    });
   }
 }

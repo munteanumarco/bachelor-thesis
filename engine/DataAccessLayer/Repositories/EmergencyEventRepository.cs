@@ -35,12 +35,65 @@ public class EmergencyEventRepository : IEmergencyEventRepository
     
     public async Task<PagedResult<EmergencyEvent>> GetEmergencyEventsAsync(GetEventsParameters parameters)
     {
-        var items = await _context.EmergencyEvents
-            .Skip((parameters.PageNumber - 1) * parameters.PageSize)
-            .Take(parameters.PageSize)
+        IQueryable<EmergencyEvent> query = _context.EmergencyEvents;
+        if (parameters.UserId != null)
+        {
+            query = query.Where(emergencyEvent => emergencyEvent.ReportedBy == Guid.Parse(parameters.UserId));
+            var count = await query.CountAsync();
+            return new PagedResult<EmergencyEvent>(await query.ToListAsync(), count, parameters.PageNumber, parameters.PageSize);
+        }
+        else
+        {
+            var items = await query
+                .Skip((parameters.PageNumber - 1) * parameters.PageSize)
+                .Take(parameters.PageSize)
+                .ToListAsync();
+
+            var count = await query.CountAsync();
+
+            return new PagedResult<EmergencyEvent>(items, count, parameters.PageNumber, parameters.PageSize);
+        }
+    }
+    
+    public async Task<IEnumerable<Guid>> GetParticipatedEventIdsAsync(string userId)
+    {
+        return await _context.Participants
+            .Where(participant => participant.UserId == userId)
+            .Select(participant => participant.EmergencyEventId)
             .ToListAsync();
-        var count = await _context.EmergencyEvents.CountAsync();
-        return new PagedResult<EmergencyEvent>(items, count, parameters.PageNumber, parameters.PageSize);
+    }
+
+    public async Task<IEnumerable<EmergencyEvent>> GetEmergencyEventsForIds(IEnumerable<Guid> eventIds)
+    {
+        var events = await _context.EmergencyEvents
+            .Where(emergencyEvent => eventIds.Contains(emergencyEvent.Id))
+            .ToListAsync();
+
+        return events;
+    }
+
+    public async Task<bool> CreateLandCoverAnalysisAsync(LandCoverAnalysis landCoverAnalysis) 
+    {
+        await _context.LandCoverAnalyses.AddAsync(landCoverAnalysis);
+        await _context.SaveChangesAsync();
+        return true;
+    }
+
+    public async Task<string?> GetAuthorUsernameAsync(string userId)
+    {
+        return await _context.Users
+            .Where(user => user.Id == userId)
+            .Select(user => user.UserName)
+            .FirstOrDefaultAsync();
+    }
+    
+    public async Task<IEnumerable<string>> GetParticipantUsernamesAsync(Guid emergencyEventId)
+    {
+        return await _context.Participants
+            .Where(participant => participant.EmergencyEventId == emergencyEventId)
+            .Include(participant => participant.User)
+            .Select(participant => participant.User.UserName)
+            .ToListAsync();
     }
 
     public async Task<IEnumerable<EmergencyEvent>> GetEmergencyEventMarkersAsync()

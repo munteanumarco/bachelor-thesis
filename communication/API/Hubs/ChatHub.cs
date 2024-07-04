@@ -64,6 +64,7 @@ public class ChatHub : Hub
         var userId = Context.User?.FindFirst(CustomClaimTypes.UserId)?.Value;
         var result = await _chatService.GetUserChatIds(userId);
         
+        
         if (!result.IsSuccess) return;
 
         var chats = result.Data;

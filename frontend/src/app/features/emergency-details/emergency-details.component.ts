@@ -10,6 +10,8 @@ import {
 import { getStatusName, Status } from '../../interfaces/emergency/Status';
 import { getSeverityName, Severity } from '../../interfaces/emergency/Severity';
 import { MessageService } from 'primeng/api';
+import { EmergencyDetailsDto } from '../../interfaces/emergency/EmergencyDetailsDto';
+import { StorageService } from '../../services/storage.service';
 
 @Component({
   selector: 'app-emergency-details',
@@ -19,12 +21,13 @@ import { MessageService } from 'primeng/api';
   styleUrl: './emergency-details.component.scss',
 })
 export class EmergencyDetailsComponent {
-  event!: EmergencyEventDto;
+  event!: EmergencyDetailsDto;
 
   constructor(
     private readonly route: ActivatedRoute,
     private readonly emergencyEventService: EmergencyEventService,
-    private readonly messageService: MessageService
+    private readonly messageService: MessageService,
+    private readonly storageService: StorageService
   ) {}
 
   ngOnInit(): void {
@@ -36,15 +39,16 @@ export class EmergencyDetailsComponent {
 
   fetchEmergencyDetails(eventId: string): void {
     this.emergencyEventService
-      .getEmergencyEvent(eventId)
+      .getEmergencyEventDetails(eventId)
       .subscribe((response) => {
-        this.event = response.emergencyEvent;
+        this.event = response.details;
       });
   }
 
   addParticipant(): void {
     this.emergencyEventService.addParticipant(this.event.id).subscribe(
       () => {
+        this.fetchEmergencyDetails(this.event.id);
         this.showSuccessParticipation();
       },
       (err) => {
@@ -69,6 +73,12 @@ export class EmergencyDetailsComponent {
       summary: 'Error',
       detail: message,
     });
+  }
+
+  isCurrentUserParticipant(): boolean {
+    return this.event.participantsUsernames.some(
+      (participant) => participant === this.storageService.getUsername()
+    );
   }
 
   getEmergencyTypeName(type: EmergencyType): string {

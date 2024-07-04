@@ -3,4 +3,22 @@
 }
 <app-spinner></app-spinner>
 <p-toast position="bottom-center" key="bc"></p-toast>
+<p-toast position="bottom-center" key="analysis" [baseZIndex]="5000">
+    <ng-template let-message pTemplate="message">
+        <div class="flex flex-col items-start p-4 rounded-lg w-96" style="min-width: 300px; max-width: 400px;">
+            <div class="text-lg font-semibold text-gray-900 mb-1">
+                {{ message.summary }}
+            </div>
+            <div class="text-sm text-gray-600 mb-3">
+                {{ message.detail }}
+            </div>
+            <button [routerLink]="['/analysis']"
+                [queryParams]="{ eventId: message.id }"
+                class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:shadow-lg transition duration-150 ease-in-out w-full text-center">
+                See Analysis
+            </button>
+        </div>
+    </ng-template>
+</p-toast>
+
 <router-outlet />

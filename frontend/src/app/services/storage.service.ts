@@ -57,11 +57,23 @@ export class StorageService {
     if (!token) return null;
 
     try {
-      const decoded: any = jwtDecode(token); // Decode the JWT token
-      // Replace the following URL with the claim's URL or key you are interested in
+      const decoded: any = jwtDecode(token);
       return decoded[
         'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'
       ];
+    } catch (error) {
+      console.error('Failed to decode token', error);
+      return null;
+    }
+  }
+
+  public getUserId(): string | null {
+    const token = this.getUserToken();
+    if (!token) return null;
+
+    try {
+      const decoded: any = jwtDecode(token);
+      return decoded['https://localhost:7154/claims/user_id'];
     } catch (error) {
       console.error('Failed to decode token', error);
       return null;

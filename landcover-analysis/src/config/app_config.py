@@ -10,3 +10,7 @@ class AppConfig:
     MODEL_PATH = os.environ.get('MODEL_PATH')
     RAW_DATA_FOLDER_PATH = os.environ.get('RAW_DATA_FOLDER_PATH')
     PROCESSED_DATA_FOLDER_PATH = os.environ.get('PROCESSED_DATA_FOLDER_PATH')
+    DATABASE_URL= os.environ.get('DATABASE_URL')
+    CLOUD_NAME = os.environ.get('CLOUD_NAME')
+    API_KEY = os.environ.get('API_KEY')
+    API_SECRET = os.environ.get('API_SECRET')

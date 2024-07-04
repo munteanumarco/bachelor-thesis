@@ -49,8 +49,8 @@ class RoadSegmentationModel:
         return x.transpose(2, 0, 1).astype('float32')
 
 
-    def predict(self, image_path):
-        image_path = os.path.join(self.raw_data_folder_path, image_path)
+    def predict(self, image_name):
+        image_path = os.path.join(self.raw_data_folder_path, image_name)
         original_image = cv2.imread(image_path)
         img= cv2.resize(original_image,(1024,1024))
         img= cv2.cvtColor(img, cv2.COLOR_BGR2RGB)

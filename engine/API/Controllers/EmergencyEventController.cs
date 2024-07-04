@@ -19,11 +19,30 @@ public class EmergencyEventController : ControllerBase
     }
     
     [HttpGet("{id}")]
-    public async Task<ActionResult<EmergencyEventDto>> GetEmergencyEventAsync([FromRoute] Guid id)
+    public async Task<ActionResult<EmergencyDetailsDto>> GetEmergencyEventAsync([FromRoute] Guid id)
     {
         var result = await _emergencyEventService.GetEmergencyEventByIdAsync(id);
         if (!result.IsSuccess) return NotFound(EmergencyEventResponse.Failure(result.Errors));
-        return Ok(EmergencyEventResponse.Success(result.Data));
+        var usernames = await _emergencyEventService.GetParticipantUsernamesAsync(id);
+        var authorUsername = await _emergencyEventService.GetAuthorUsernameAsync(result.Data.ReportedBy.ToString());
+        var details = new EmergencyDetailsDto()
+        {
+            Id = result.Data.Id,
+            Description = result.Data.Description,
+            Location = result.Data.Location,
+            Latitude = result.Data.Latitude,
+            Longitude = result.Data.Longitude,
+            Severity = result.Data.Severity,
+            Status = result.Data.Status,
+            Type = result.Data.Type,
+            ReportedBy = result.Data.ReportedBy,
+            ReportedByUsername = authorUsername.Data ?? "Anonymous",
+            ReportedAt = result.Data.ReportedAt,
+            UpdatedAt = result.Data.UpdatedAt,
+            ParticipantsUsernames = usernames.Data,
+            ParticipantsCount = usernames.Data.Count()
+        };
+        return Ok(EmergencyDetailsResponse.Success(details));
     }
     
     [Authorize]
@@ -31,6 +50,17 @@ public class EmergencyEventController : ControllerBase
     public async Task<ActionResult<IEnumerable<EmergencyEventDto>>> GetEmergencyEventsAsync([FromQuery] GetEventsParameters parameters)
     {
         var result = await _emergencyEventService.GetEmergencyEventsAsync(parameters);
+        if (!result.IsSuccess) return NotFound(EmergencyEventResponse.Failure(result.Errors));
+        return Ok(result.Data);
+    }
+    
+    
+    [Authorize]
+    [HttpGet("participated")]
+    public async Task<ActionResult<IEnumerable<EmergencyEventDto>>> GetParticipatedEventsAsync()
+    {
+        var userIdString = HttpContext.Items["userId"] as string;
+        var result = await _emergencyEventService.GetParticipatedEventsAsync(userIdString);
         if (!result.IsSuccess) return NotFound(EmergencyEventResponse.Failure(result.Errors));
         return Ok(result.Data);
     }
@@ -54,6 +84,8 @@ public class EmergencyEventController : ControllerBase
             var result = await _emergencyEventService.CreateEmergencyEventAsync(emergencyEventCreationDto, userIdString);
             if (!result.IsSuccess) return BadRequest(EmergencyEventResponse.Failure(result.Errors));
             var emergencyEvent = result.Data;
+            await _emergencyEventService.AddParticipantAsync(emergencyEvent.Id, userIdString);
+            await _emergencyEventService.CreateEmptyAnalysisAsync(emergencyEvent.Id);
             await _emergencyEventService.PublishEmergencyReportedAsync(emergencyEvent, username);
             return Created($"api/emergency-events/{emergencyEvent.Id}", EmergencyEventResponse.Success(emergencyEvent));
         }
